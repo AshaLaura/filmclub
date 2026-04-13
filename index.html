@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Film Club — Oakland</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:      #0c0c0c;
+      --off-white:  #e8e2d0;
+      --cream:      #d4cbb8;
+      --green:      #b6ff47;
+      --purple:     #5a0e82;
+      --purple-mid: #7a1fad;
+      --gray:       #1e1e1e;
+      --gray2:      #252525;
+      --border:     #2e2e2e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--off-white);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── Shared ─── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 4px 12px;
+      margin-bottom: 24px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea {
+      background: #111;
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 14px 18px;
+      min-height: 48px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      border-radius: 0;
+      width: 100%;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: rgba(212,203,184,0.22); }
+    input:focus, textarea:focus { border-color: var(--green); background: #151515; }
+
+    .btn-green {
+      background: var(--green);
+      color: var(--black);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.14em;
+      border: none;
+      padding: 0 28px;
+      min-height: 52px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-green:hover  { background: #cbff6e; }
+    .btn-green:active { transform: scale(0.99); }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      height: 60px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(12,12,12,0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--off-white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--green); }
+
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+
+    /* ─── Hero ─── */
+    #hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-top: 60px;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 48px 20px 72px;
+      position: relative;
+    }
+
+    /* ─── Bottom signup section ─── */
+    #signup {
+      padding: 100px 20px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    #signup::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--purple-mid) 60%, transparent);
+    }
+    .signup-inner {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 80px;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .signup-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 8vw, 110px);
+      line-height: 0.88;
+      margin-bottom: 16px;
+    }
+    .signup-title span { color: var(--green); }
+    .signup-title .outline { color: transparent; -webkit-text-stroke: 2px var(--off-white); }
+    .signup-sub {
+      font-size: 16px;
+      color: var(--cream);
+      opacity: 0.6;
+      line-height: 1.6;
+    }
+    .signup-form-wrap {
+      background: var(--gray);
+      padding: 40px 36px;
+      position: relative;
+    }
+    .signup-form-wrap::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--green);
+    }
+    .signup-form-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .signup-form-sub   { font-size: 12px; color: var(--cream); opacity: 0.55; line-height: 1.5; margin-bottom: 24px; }
+    .signup-form       { display: flex; flex-direction: column; gap: 10px; }
+    .signup-form-note  { font-size: 10px; color: var(--cream); opacity: 0.3; letter-spacing: 0.06em; line-height: 1.5; }
+    .signup-success { display: none; text-align: center; padding: 20px 0; }
+    .signup-success.show { display: block; }
+    .signup-success-icon  { font-size: 40px; color: var(--green); margin-bottom: 10px; }
+    .signup-success-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--green); letter-spacing: 0.1em; margin-bottom: 6px; }
+    .signup-success-msg   { font-size: 13px; color: var(--cream); opacity: 0.6; line-height: 1.6; }
+
+    .hero-bg-text {
+      position: absolute;
+      top: 50%; left: -5%;
+      transform: translateY(-52%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(160px, 24vw, 360px);
+      line-height: 0.85;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(232,226,208,0.05);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(96px, 18vw, 280px);
+      line-height: 0.88;
+      position: relative;
+    }
+    .hero-title .line-green  { color: var(--green); }
+    .hero-title .line-purple { color: transparent; -webkit-text-stroke: 2px var(--purple-mid); }
+
+    .hero-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--green), var(--purple-mid) 60%, transparent);
+      margin: 28px 0;
+      position: relative;
+    }
+
+    .hero-tagline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(22px, 3.5vw, 52px);
+      letter-spacing: 0.04em;
+      position: relative;
+    }
+    .hero-tagline em { font-style: normal; color: var(--green); }
+
+    .hero-form-title { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .hero-form-sub   { font-size: 12px; color: var(--cream); opacity: 0.55; line-height: 1.5; margin-bottom: 24px; }
+    .hero-form       { display: flex; flex-direction: column; gap: 10px; }
+    .hero-form-note  { font-size: 10px; color: var(--cream); opacity: 0.3; letter-spacing: 0.06em; line-height: 1.5; }
+
+    .hero-success { display: none; text-align: center; padding: 16px 0; }
+    .hero-success.show { display: block; }
+    .hero-success-icon  { font-size: 40px; color: var(--green); margin-bottom: 10px; }
+    .hero-success-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--green); letter-spacing: 0.1em; margin-bottom: 6px; }
+    .hero-success-msg   { font-size: 13px; color: var(--cream); opacity: 0.6; line-height: 1.6; }
+
+    /* ─── What We Are ─── */
+    #about {
+      padding: 100px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 8vw, 108px);
+      line-height: 0.9;
+      margin-bottom: 40px;
+    }
+    .section-title .accent  { color: var(--green); }
+    .section-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--off-white); }
+
+    .about-body { font-size: 16px; color: var(--cream); line-height: 1.7; margin-bottom: 28px; }
+    .about-body strong { color: var(--off-white); font-weight: 700; }
+
+    .pillars { border-top: 1px solid var(--border); }
+    .pillar {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pillar-num  { font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--green); letter-spacing: 0.1em; width: 28px; flex-shrink: 0; }
+    .pillar-text { font-size: 14px; font-weight: 600; color: var(--off-white); }
+    .pillar-sub  { font-size: 12px; color: var(--cream); opacity: 0.65; margin-top: 2px; }
+
+    /* ════════════════════════════════
+       QUIZ
+    ════════════════════════════════ */
+    #quiz {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .quiz-header { padding: 0 20px; margin-bottom: 36px; }
+
+    .quiz-progress { display: flex; gap: 6px; margin-bottom: 16px; }
+    .quiz-pip { height: 3px; flex: 1; background: var(--border); transition: background 0.35s; }
+    .quiz-pip.active { background: var(--green); }
+
+    .quiz-step-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px;
+    }
+
+    .quiz-question {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(30px, 5.5vw, 68px);
+      line-height: 0.92;
+    }
+
+    .quiz-subheading {
+      font-size: 14px;
+      color: var(--cream);
+      opacity: 0.6;
+      margin-top: 8px;
+      line-height: 1.5;
+      min-height: 22px;
+    }
+
+    /* Step panels */
+    .quiz-steps-wrap { overflow: hidden; }
+
+    .quiz-step { display: none; padding: 0 20px; }
+    .quiz-step.active {
+      display: block;
+      animation: qStepIn 0.32s cubic-bezier(0.22,1,0.36,1);
+    }
+    @keyframes qStepIn {
+      from { opacity: 0; transform: translateX(28px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Film card grids ── */
+    .qgrid-5,
+    .qgrid-6 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    /* Film card — bold graphic rectangle, 2:3 ratio */
+    .qfilm-card {
+      aspect-ratio: 2/3;
+      background: var(--gray);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      flex-direction: column;
+    }
+    .qfilm-card:hover  { border-color: rgba(182,255,71,0.45); background: #222; }
+    .qfilm-card.chosen { border-color: var(--green); background: rgba(182,255,71,0.06); }
+
+    .qfilm-inner {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      position: relative;
+    }
+
+    .qfilm-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(13px, 1.9vw, 21px);
+      letter-spacing: 0.04em;
+      color: var(--off-white);
+      text-align: center;
+      line-height: 1.15;
+      transition: opacity 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+    .qfilm-card.chosen .qfilm-title { color: var(--green); }
+
+    /* Desktop hover overlay */
+    .qfilm-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(12,12,12,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 2;
+    }
+    .qfilm-overlay-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      color: var(--off-white);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .qfilm-overlay-trailer {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      text-decoration: none;
+      border: 1px solid rgba(182,255,71,0.4);
+      padding: 4px 10px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .qfilm-overlay-trailer:hover { background: rgba(182,255,71,0.12); }
+
+    @media (hover: hover) {
+      .qfilm-card:hover .qfilm-overlay { opacity: 1; }
+    }
+
+    /* Mobile: always-visible description + trailer */
+    .qfilm-desc-mobile {
+      display: none;
+      font-size: 11px;
+      color: var(--cream);
+      opacity: 0.55;
+      text-align: center;
+      line-height: 1.4;
+      padding: 0 10px 6px;
+    }
+    .qfilm-trailer-mobile {
+      display: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--green);
+      text-decoration: none;
+      text-align: center;
+      padding: 6px 12px 10px;
+      border-top: 1px solid var(--border);
+    }
+    @media (hover: none) {
+      .qfilm-desc-mobile    { display: block; }
+      .qfilm-trailer-mobile { display: block; }
+    }
+
+    /* "None" card special treatment */
+    .qfilm-card.none-card .qfilm-title { font-size: clamp(11px, 1.5vw, 16px); opacity: 0.6; }
+    .qfilm-card.none-card { border-style: dashed; }
+    .qfilm-card.none-card .qfilm-inner { flex-direction: column; gap: 8px; }
+    .qfilm-none-emoji { font-size: 28px; line-height: 1; }
+
+    /* ── Drink card grid ── */
+    .qgrid-drinks {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .qdrink-card {
+      background: var(--gray);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 120px;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .qdrink-card:hover  { border-color: rgba(182,255,71,0.45); background: #222; }
+    .qdrink-card.chosen { border-color: var(--green); background: rgba(182,255,71,0.06); }
+
+    .qdrink-emoji { font-size: 32px; line-height: 1; }
+    .qdrink-label { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.08em; color: var(--off-white); text-align: center; }
+    .qdrink-sub   { font-size: 11px; color: var(--cream); opacity: 0.5; text-align: center; line-height: 1.3; }
+    .qdrink-card.chosen .qdrink-label { color: var(--green); }
+    .qdrink-card.chosen .qdrink-sub   { opacity: 0.8; color: var(--green); }
+
+    @media (max-width: 639px) {
+      .qgrid-drinks .qdrink-card:last-child { grid-column: span 2; }
+    }
+
+    /* ── Summary card (Step 4) ── */
+    .quiz-summary-wrap { max-width: 680px; }
+
+    .quiz-summary-card {
+      border: 1px solid var(--green);
+      padding: 36px 32px;
+      margin-bottom: 32px;
+      position: relative;
+      background: rgba(182,255,71,0.03);
+    }
+    .quiz-summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--purple-mid));
+    }
+
+    .quiz-summary-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 16px;
+    }
+    .quiz-summary-text {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--off-white);
+      line-height: 1.65;
+    }
+    .quiz-summary-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .quiz-chip {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--black);
+      background: var(--green);
+      padding: 4px 12px;
+    }
+
+    .quiz-cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 0.9;
+      margin-bottom: 8px;
+    }
+    .quiz-cta-title span { color: var(--green); }
+    .quiz-cta-sub { font-size: 14px; color: var(--cream); opacity: 0.65; margin-bottom: 24px; line-height: 1.6; }
+
+    .quiz-form { display: flex; flex-direction: column; gap: 10px; }
+
+    .quiz-success { display: none; padding: 32px 0; }
+    .quiz-success.show { display: block; }
+    .quiz-success-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 5vw, 52px);
+      color: var(--green);
+      letter-spacing: 0.08em;
+      line-height: 0.95;
+      margin-bottom: 12px;
+    }
+    .quiz-success-msg { font-size: 15px; color: var(--cream); opacity: 0.6; }
+
+    /* Nav row */
+    .quiz-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 4px;
+      gap: 16px;
+    }
+    .quiz-hint { font-size: 12px; color: var(--cream); opacity: 0.38; letter-spacing: 0.05em; }
+
+    .btn-next {
+      background: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.12em;
+      padding: 0 28px;
+      min-height: 48px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn-next:hover    { background: var(--green); color: var(--black); }
+    .btn-next:disabled { opacity: 0.28; pointer-events: none; }
+
+    /* ─── Past Events ─── */
+    #events {
+      padding: 100px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .events-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .events-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(44px, 7vw, 92px);
+      line-height: 0.9;
+    }
+    .events-title .accent { color: var(--purple-mid); }
+
+    .events-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+
+    .event-card {
+      background: var(--gray);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+    .event-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .event-card:first-child::before { background: var(--green); }
+    .event-card:last-child::before  { background: var(--purple-mid); }
+    .event-card:hover { background: var(--gray2); }
+
+    .event-card-bg {
+      position: absolute; bottom: -20px; right: -10px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 140px; line-height: 1;
+      color: transparent; pointer-events: none; user-select: none;
+    }
+    .event-card:first-child .event-card-bg { -webkit-text-stroke: 1px rgba(182,255,71,0.07); }
+    .event-card:last-child  .event-card-bg { -webkit-text-stroke: 1px rgba(122,31,173,0.15); }
+
+    .event-date  { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+    .event-card:last-child .event-date { color: var(--purple-mid); }
+    .event-film  { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4vw, 54px); line-height: 0.95; margin-bottom: 12px; }
+    .event-desc  { font-size: 13px; color: var(--cream); opacity: 0.65; line-height: 1.6; }
+
+    .event-venue-block { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+    .event-venue-item  { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--cream); opacity: 0.8; }
+    .event-venue-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .event-card:last-child .event-venue-item .dot { background: var(--purple-mid); }
+    .event-venue-item strong { color: var(--off-white); font-weight: 600; }
+
+    /* ════════════════════════════════
+       FILM BOARD
+    ════════════════════════════════ */
+    #board {
+      padding: 100px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .board-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(44px, 7vw, 92px);
+      line-height: 0.9;
+      margin-bottom: 10px;
+    }
+    .board-heading span { color: var(--green); }
+    .board-sub { font-size: 15px; color: var(--cream); opacity: 0.6; margin-bottom: 56px; }
+
+    /* Leaderboard */
+    .lb-section { margin-bottom: 64px; }
+    .lb-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cream); opacity: 0.45; margin-bottom: 20px; }
+    .lb-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .lb-item { display: flex; align-items: center; gap: 20px; background: var(--gray); padding: 20px 24px; transition: background 0.2s; }
+    .lb-item:hover { background: var(--gray2); }
+
+    .lb-rank  { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; flex-shrink: 0; color: var(--cream); opacity: 0.35; }
+    .lb-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.03em; flex: 1; color: var(--off-white); line-height: 1; }
+    .lb-count { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.06em; flex-shrink: 0; color: var(--cream); opacity: 0.5; }
+
+    .lb-item-1 { border-left: 3px solid var(--green); padding-left: 21px; }
+    .lb-item-1 .lb-rank  { font-size: 32px; color: var(--green); opacity: 1; }
+    .lb-item-1 .lb-title { font-size: clamp(22px, 3.5vw, 40px); color: var(--green); }
+    .lb-item-1 .lb-count { font-size: 28px; color: var(--green); opacity: 0.9; }
+
+    .lb-item-2 .lb-rank  { font-size: 22px; }
+    .lb-item-2 .lb-title { font-size: clamp(18px, 2.5vw, 28px); }
+    .lb-item-2 .lb-count { font-size: 22px; }
+
+    .lb-item-3 .lb-rank  { font-size: 16px; }
+    .lb-item-3 .lb-title { font-size: clamp(15px, 2vw, 22px); }
+    .lb-item-3 .lb-count { font-size: 18px; }
+
+    /* Add form */
+    .board-add-section { margin-bottom: 56px; }
+    .board-add-label { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.08em; color: var(--off-white); margin-bottom: 16px; }
+    .board-add-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .board-add-form .btn-green { grid-column: 1 / -1; font-size: 18px; }
+
+    /* Full board */
+    .board-grid-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cream); opacity: 0.45; margin-bottom: 20px; }
+    .board-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+    .board-card { background: var(--gray); padding: 28px 24px; display: flex; flex-direction: column; gap: 10px; transition: background 0.2s; }
+    .board-card:hover { background: var(--gray2); }
+    .board-card-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(18px, 2vw, 26px); line-height: 1.05; letter-spacing: 0.02em; color: var(--off-white); }
+    .board-card-why { font-style: italic; font-size: 13px; color: var(--cream); opacity: 0.65; line-height: 1.5; flex: 1; }
+
+    .btn-vote {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--cream);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 0 16px;
+      min-height: 48px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-vote:hover { border-color: var(--green); color: var(--green); }
+    .btn-vote.voted { border-color: var(--green); color: var(--green); background: rgba(182,255,71,0.08); }
+    .btn-vote-count { font-family: 'Bebas Neue', sans-serif; font-size: 20px; }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.12em; opacity: 0.4; }
+    .footer-logo span { color: var(--green); opacity: 1; }
+    .footer-copy { font-size: 11px; color: var(--cream); opacity: 0.25; letter-spacing: 0.1em; }
+
+    /* ════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════ */
+    @media (max-width: 1023px) {
+      .about-grid  { grid-template-columns: 1fr; gap: 40px; }
+      .signup-inner { grid-template-columns: 1fr; gap: 48px; }
+      .board-grid  { grid-template-columns: repeat(2, 1fr); }
+      .board-add-form { grid-template-columns: 1fr; }
+      .board-add-form .btn-green { grid-column: 1; }
+    }
+
+    @media (min-width: 900px) {
+      .qgrid-5     { grid-template-columns: repeat(5, 1fr); }
+      .qgrid-6     { grid-template-columns: repeat(6, 1fr); }
+      .qgrid-drinks { grid-template-columns: repeat(5, 1fr); }
+    }
+    @media (min-width: 640px) and (max-width: 899px) {
+      .qgrid-5      { grid-template-columns: repeat(3, 1fr); }
+      .qgrid-6      { grid-template-columns: repeat(3, 1fr); }
+      .qgrid-drinks { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 639px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+      .container { padding: 0 16px; }
+
+      #hero { padding-top: 60px; }
+      .hero-left { padding: 36px 16px 56px; }
+      .hero-title { font-size: clamp(80px, 20vw, 130px); }
+      #signup { padding: 64px 16px; }
+      .signup-form-wrap { padding: 32px 20px; }
+
+      #about  { padding: 64px 16px; }
+
+      #quiz  { padding: 64px 0; }
+      .quiz-header { padding: 0 16px; }
+      .quiz-step   { padding: 0 16px; }
+      .quiz-summary-card { padding: 24px 20px; }
+
+      #events { padding: 64px 16px; }
+      .events-grid { grid-template-columns: 1fr; }
+      .event-card  { padding: 32px 24px; }
+
+      #board { padding: 64px 16px; }
+      .board-grid { grid-template-columns: 1fr; }
+
+      footer { flex-direction: column; text-align: center; padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#">FILM<span>&#x25CF;</span>CLUB</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#board">Vote</a></li>
+    <li><a href="#signup">Join</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-bg-text" aria-hidden="true">FC</div>
+    <div class="hero-eyebrow">Oakland, CA &nbsp;—&nbsp; Est. 2024</div>
+    <h1 class="hero-title">
+      <span class="line-green">FILM</span><br>
+      <span class="line-purple">CLUB</span>
+    </h1>
+    <div class="hero-divider"></div>
+    <p class="hero-tagline">Good films.&nbsp; Real people.&nbsp; <em>Strong drinks.</em></p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     WHAT WE ARE
+══════════════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="tag">What we are</div>
+        <h2 class="section-title">
+          <span class="outline">NOT</span><br>
+          <span>YOUR</span><br>
+          <span class="accent">AVERAGE</span><br>
+          <span>NIGHT OUT</span>
+        </h2>
+      </div>
+      <div>
+        <p class="about-body">Film Club is a <strong>monthly IRL gathering</strong> in Oakland for people who give a damn about cinema. We watch arthouse and indie films — the kind that actually make you feel something — then take the conversation somewhere with a drink in hand.</p>
+        <p class="about-body">No pretension. No algorithm. Just <strong>real people, real films, real talk</strong> at some of the best venues the Bay has to offer.</p>
+        <div class="pillars">
+          <div class="pillar">
+            <div class="pillar-num">01</div>
+            <div>
+              <div class="pillar-text">Arthouse &amp; Indie Films</div>
+              <div class="pillar-sub">A24, NEON, SF Film Fest picks &amp; more</div>
+            </div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-num">02</div>
+            <div>
+              <div class="pillar-text">IRL Meetups in Oakland</div>
+              <div class="pillar-sub">Independent theaters, dive bars, local spots</div>
+            </div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-num">03</div>
+            <div>
+              <div class="pillar-text">Real Conversation Over Drinks</div>
+              <div class="pillar-sub">The movie is just the beginning</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     QUIZ
+══════════════════════════════════════ -->
+<section id="quiz">
+  <div class="quiz-header">
+    <div class="quiz-progress">
+      <div class="quiz-pip active" id="pip-0"></div>
+      <div class="quiz-pip"        id="pip-1"></div>
+      <div class="quiz-pip"        id="pip-2"></div>
+      <div class="quiz-pip"        id="pip-3"></div>
+    </div>
+    <div class="quiz-step-label" id="quizStepLabel">Step 1 of 4</div>
+    <h2 class="quiz-question" id="quizQuestion">WHAT DID YOU<br>WATCH LAST YEAR?</h2>
+    <p class="quiz-subheading" id="quizSubheading"></p>
+  </div>
+
+  <div class="quiz-steps-wrap">
+
+    <!-- STEP 1 -->
+    <div class="quiz-step active" id="step-0">
+      <div class="qgrid-5" role="group" aria-label="Films from last year">
+
+        <div class="qfilm-card" data-step="0" data-val="Sinners" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">SINNERS</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">Ryan Coogler's vampire epic set in the Jim Crow South</p>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">Ryan Coogler's vampire epic set in the Jim Crow South</div>
+        </div>
+
+        <div class="qfilm-card" data-step="0" data-val="The Substance" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">THE SUBSTANCE</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">Demi Moore in an unhinged body horror fever dream</p>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">Demi Moore in an unhinged body horror fever dream</div>
+        </div>
+
+        <div class="qfilm-card" data-step="0" data-val="Conclave" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">CONCLAVE</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">A Vatican thriller that will make you hold your breath</p>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">A Vatican thriller that will make you hold your breath</div>
+        </div>
+
+        <div class="qfilm-card" data-step="0" data-val="Anora" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">ANORA</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">Sean Baker's Palme d'Or winner. Messy, alive, unforgettable</p>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">Sean Baker's Palme d'Or winner. Messy, alive, unforgettable</div>
+        </div>
+
+        <div class="qfilm-card none-card" data-step="0" data-val="none" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-none-emoji">🪨</div>
+            <div class="qfilm-title">NONE OF THESE — I'M LIVING UNDER A ROCK</div>
+          </div>
+          <div class="qfilm-desc-mobile">No judgment. We've got you.</div>
+        </div>
+
+      </div>
+      <div class="quiz-nav">
+        <span class="quiz-hint">Select one to continue</span>
+        <button class="btn-next" id="next-0" disabled onclick="advanceQuiz(1)">NEXT →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="quiz-step" id="step-1">
+      <div class="qgrid-6" role="group" aria-label="Films to watch next">
+
+        <div class="qfilm-card" data-step="1" data-val="Project Hail Mary" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">PROJECT HAIL MARY</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">Ryan Gosling wakes up alone in space with no memory — and Earth is dying</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Project+Hail+Mary+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">Ryan Gosling wakes up alone in space with no memory — and Earth is dying</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Project+Hail+Mary+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+        </div>
+
+        <div class="qfilm-card" data-step="1" data-val="I Love Boosters" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">I LOVE BOOSTERS</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">Keke Palmer leads a crew of shoplifters taking down a ruthless fashion mogul. From the director of Sorry to Bother You. 97% on RT</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=I+Love+Boosters+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">Keke Palmer leads a crew of shoplifters taking down a ruthless fashion mogul. 97% on RT</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=I+Love+Boosters+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+        </div>
+
+        <div class="qfilm-card" data-step="1" data-val="Mother Mary" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">MOTHER MARY</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">Anne Hathaway as a pop star, Michaela Coel as her estranged designer. Sapphic, dark, and soundtracked by Charli XCX</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Mother+Mary+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">Anne Hathaway as a pop star, Michaela Coel as her estranged designer. Sapphic, dark, soundtracked by Charli XCX</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Mother+Mary+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+        </div>
+
+        <div class="qfilm-card" data-step="1" data-val="Camp Miasma" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">TEENAGE SEX AND DEATH AT CAMP MIASMA</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">A queer director making a slasher reboot becomes obsessed with the original film's final girl. Jane Schoenbrun goes full Cronenberg</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Teenage+Sex+and+Death+at+Camp+Miasma+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">A queer director making a slasher reboot becomes obsessed with the original film's final girl. Jane Schoenbrun goes full Cronenberg</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Teenage+Sex+and+Death+at+Camp+Miasma+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+        </div>
+
+        <div class="qfilm-card" data-step="1" data-val="Forbidden Fruits" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">FORBIDDEN FRUITS</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">A witchy femme cult runs out of a mall after hours. Sapphic horror comedy with bite</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Forbidden+Fruits+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">A witchy femme cult runs out of a mall after hours. Sapphic horror comedy with bite</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Forbidden+Fruits+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+        </div>
+
+        <div class="qfilm-card" data-step="1" data-val="Exit 8" tabindex="0" role="button" aria-pressed="false">
+          <div class="qfilm-inner">
+            <div class="qfilm-title">EXIT 8</div>
+            <div class="qfilm-overlay">
+              <p class="qfilm-overlay-text">Trapped in an endless subway corridor — spot the anomaly or start over. Japanese psychological thriller, just opened</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Exit+8+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+            </div>
+          </div>
+          <div class="qfilm-desc-mobile">Trapped in an endless subway corridor — spot the anomaly or start over. Just opened</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Exit+8+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
+        </div>
+
+      </div>
+      <div class="quiz-nav">
+        <span class="quiz-hint">Select one to continue</span>
+        <button class="btn-next" id="next-1" disabled onclick="advanceQuiz(2)">NEXT →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="quiz-step" id="step-2">
+      <div class="qgrid-drinks" role="group" aria-label="Your drink">
+        <div class="qdrink-card" data-step="2" data-val="IPA" tabindex="0" role="button" aria-pressed="false">
+          <div class="qdrink-emoji">🍺</div>
+          <div class="qdrink-label">IPA</div>
+          <div class="qdrink-sub">Hoppy and proud</div>
+        </div>
+        <div class="qdrink-card" data-step="2" data-val="Espresso Martini" tabindex="0" role="button" aria-pressed="false">
+          <div class="qdrink-emoji">☕</div>
+          <div class="qdrink-label">ESPRESSO MARTINI</div>
+          <div class="qdrink-sub">Caffeinated and dangerous</div>
+        </div>
+        <div class="qdrink-card" data-step="2" data-val="Tiki Drink" tabindex="0" role="button" aria-pressed="false">
+          <div class="qdrink-emoji">🍹</div>
+          <div class="qdrink-label">TIKI DRINK</div>
+          <div class="qdrink-sub">Chaotic good</div>
+        </div>
+        <div class="qdrink-card" data-step="2" data-val="Red Wine" tabindex="0" role="button" aria-pressed="false">
+          <div class="qdrink-emoji">🍷</div>
+          <div class="qdrink-label">RED WINE</div>
+          <div class="qdrink-sub">Classic for a reason</div>
+        </div>
+        <div class="qdrink-card" data-step="2" data-val="Mocktail" tabindex="0" role="button" aria-pressed="false">
+          <div class="qdrink-emoji">🌿</div>
+          <div class="qdrink-label">MOCKTAIL</div>
+          <div class="qdrink-sub">Sober but still the most interesting person in the room</div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <span class="quiz-hint">Select one to continue</span>
+        <button class="btn-next" id="next-2" disabled onclick="showSummary()">SEE MY READ →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Summary + Signup -->
+    <div class="quiz-step" id="step-3">
+      <div class="quiz-summary-wrap" id="quizFinalWrap">
+        <div class="quiz-summary-card" id="quizSummaryCard">
+          <div class="quiz-summary-label">YOUR FILM CLUB READ</div>
+          <p class="quiz-summary-text" id="quizSummaryText"></p>
+          <div class="quiz-summary-chips" id="quizChips"></div>
+        </div>
+
+        <h3 class="quiz-cta-title">YOU<br><span>BELONG HERE.</span></h3>
+        <p class="quiz-cta-sub">We'll hit you up when the next one drops.</p>
+
+        <form class="quiz-form" id="quizForm" novalidate>
+          <input type="text"  id="quizName"  placeholder="Name"             autocomplete="name"  required />
+          <input type="email" id="quizEmail" placeholder="Email address"    autocomplete="email" required />
+          <input type="tel"   id="quizPhone" placeholder="Phone (optional)" autocomplete="tel" />
+          <button type="submit" class="btn-green">PUT ME ON THE LIST</button>
+        </form>
+      </div>
+
+      <div class="quiz-success" id="quizSuccess">
+        <div class="quiz-success-title">YOU'RE ON THE LIST.<br>SEE YOU AT THE NEXT ONE.</div>
+        <p class="quiz-success-msg">We'll be in touch before anyone else hears about it.</p>
+      </div>
+    </div>
+
+  </div><!-- /quiz-steps-wrap -->
+</section>
+
+<!-- ══════════════════════════════════════
+     PAST EVENTS
+══════════════════════════════════════ -->
+<section id="events">
+  <div class="container">
+    <div class="events-header">
+      <h2 class="events-title">PAST<br><span class="accent">EVENTS</span></h2>
+      <div class="tag">The archive</div>
+    </div>
+    <div class="events-grid">
+      <div class="event-card">
+        <div class="event-card-bg" aria-hidden="true">01</div>
+        <div class="event-date">Past Event / Vol. 01</div>
+        <h3 class="event-film"><em>Love Lies Bleeding</em></h3>
+        <p class="event-desc">Rose Glass's neo-noir fever dream. Kristen Stewart. Katy O'Brian. A film that punches you in the chest and dares you to look away.</p>
+        <div class="event-venue-block">
+          <div class="event-venue-item"><div class="dot"></div><span><strong>Piedmont Theatre</strong> — Screening</span></div>
+          <div class="event-venue-item"><div class="dot"></div><span><strong>Kona Club</strong> — Drinks after</span></div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-bg" aria-hidden="true">02</div>
+        <div class="event-date">Past Event / Vol. 02</div>
+        <h3 class="event-film"><em>Anora</em></h3>
+        <p class="event-desc">Sean Baker's Palme d'Or winner. Messy, alive, and completely unforgettable. The room was still buzzing two rounds later.</p>
+        <div class="event-venue-block">
+          <div class="event-venue-item"><div class="dot"></div><span><strong>The New Parkway</strong> — Screening</span></div>
+          <div class="event-venue-item"><div class="dot"></div><span><strong>Beers at the bar</strong> — Right after the credits</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FILM BOARD
+══════════════════════════════════════ -->
+<section id="board">
+  <div class="container">
+    <div class="tag">Community picks</div>
+    <h2 class="board-heading">WHAT SHOULD<br>WE <span>WATCH?</span></h2>
+    <p class="board-sub">Vote for your pick — or add one to the board.</p>
+
+    <div class="lb-section">
+      <div class="lb-label">THE FRONT RUNNERS</div>
+      <div class="lb-list" id="leaderboard"></div>
+    </div>
+
+    <div class="board-add-section">
+      <div class="board-add-label">ADD A FILM TO THE BOARD</div>
+      <form class="board-add-form" id="boardForm" novalidate>
+        <input type="text" id="boardTitle" placeholder="Film title" required />
+        <textarea id="boardWhy" placeholder="Why do you want to see this?"></textarea>
+        <button type="submit" class="btn-green">ADD TO THE BOARD</button>
+      </form>
+    </div>
+
+    <div class="board-grid-label">ALL PICKS — SORTED BY VOTES</div>
+    <div class="board-grid" id="boardGrid"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SIGNUP
+══════════════════════════════════════ -->
+<section id="signup">
+  <div class="signup-inner">
+    <div>
+      <h2 class="signup-title">
+        GET<br>
+        <span class="outline">ON</span><br>
+        THE<br>
+        <span>LIST</span>
+      </h2>
+      <p class="signup-sub">Next event drops to the list first. No spam — just the film, the venue, and when to show up.</p>
+    </div>
+    <div class="signup-form-wrap">
+      <div class="signup-form-title">JOIN FILM CLUB</div>
+      <p class="signup-form-sub">We only write when there's a real event. Unsubscribe any time.</p>
+      <form class="signup-form" id="signupForm" novalidate>
+        <input type="text"  id="signupName"  placeholder="Your name"     autocomplete="name"  required />
+        <input type="email" id="signupEmail" placeholder="Email address" autocomplete="email" required />
+        <button type="submit" class="btn-green">I'M IN — PUT ME ON THE LIST</button>
+        <p class="signup-form-note">Good films. Real people. Strong drinks. See you there.</p>
+      </form>
+      <div class="signup-success" id="signupSuccess">
+        <div class="signup-success-icon">✔</div>
+        <div class="signup-success-title">YOU'RE ON THE LIST</div>
+        <div class="signup-success-msg">We'll see you at the next one. Keep your eyes on your inbox.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">FILM<span>&#x25CF;</span>CLUB</div>
+  <div class="footer-copy">Oakland, CA &nbsp;—&nbsp; Arthouse &amp; Indie &nbsp;— &copy; 2024</div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════
+   SIGNUP FORM
+══════════════════════════════════════ */
+document.getElementById('signupForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name  = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  if (!name || !email.includes('@')) return;
+  this.style.display = 'none';
+  document.getElementById('signupSuccess').classList.add('show');
+});
+
+/* ══════════════════════════════════════
+   QUIZ
+══════════════════════════════════════ */
+const QUESTIONS = [
+  { q: 'WHAT DID YOU\nWATCH LAST YEAR?',  sub: '' },
+  { q: 'WHAT SHOULD\nWE WATCH NEXT?',      sub: '' },
+  { q: 'WHAT ARE YOU\nDRINKING?',          sub: 'We love to chat over drinks — help us find your vibe.' },
+  { q: "HERE'S YOUR READ.",                sub: '' },
+];
+
+let currentStep = 0;
+const picks = { s1: null, s2: null, s3: null };
+
+function renderQuestion(step) {
+  const { q, sub } = QUESTIONS[step];
+  document.getElementById('quizQuestion').innerHTML = q.replace('\n', '<br>');
+  document.getElementById('quizSubheading').textContent = sub;
+  document.getElementById('quizStepLabel').textContent  = `Step ${step + 1} of 4`;
+  document.querySelectorAll('.quiz-pip').forEach((p, i) => p.classList.toggle('active', i <= step));
+}
+
+document.querySelectorAll('.qfilm-card, .qdrink-card').forEach(card => {
+  function activate() {
+    const step = card.dataset.step;
+    document.querySelectorAll(`[data-step="${step}"]`).forEach(c => {
+      c.classList.remove('chosen');
+      c.setAttribute('aria-pressed', 'false');
+    });
+    card.classList.add('chosen');
+    card.setAttribute('aria-pressed', 'true');
+    picks[`s${parseInt(step) + 1}`] = card.dataset.val;
+    const nb = document.getElementById(`next-${step}`);
+    if (nb) nb.disabled = false;
+  }
+  card.addEventListener('click', activate);
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+});
+
+function advanceQuiz(nextStep) {
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep = nextStep;
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+  renderQuestion(currentStep);
+  document.getElementById('quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Personality system ──
+   150 unique combinations from 25 openings (s1×s3) + 6 middles (s2) + 5 closers (s3).
+   5 exact overrides for the examples in the brief. */
+
+const OVERRIDES = {
+  'Anora|Mother Mary|Espresso Martini':
+    "You're a chaotic romantic who shows up 10 minutes late with strong opinions and stronger coffee. You cry at films but won't admit it. We need you at the next one.",
+  'The Substance|Forbidden Fruits|IPA':
+    "You want your cinema like your beer — bold, a little bitter, and slightly unhinged. You'll be the one still talking about it at last call. Perfect.",
+  'Sinners|I Love Boosters|Tiki Drink':
+    "You show up for the culture, stay for the chaos, and leave with three new opinions and a strong drink in hand. This is exactly your scene.",
+  'none|Exit 8|Mocktail':
+    "You're new here but you came to play. A psychological Japanese thriller and a mocktail that hits harder than most cocktails? You're going to fit right in.",
+  'Conclave|Camp Miasma|Red Wine':
+    "You contain multitudes. One minute you're whispering about Vatican politics, the next you're screaming at a slasher. We respect it deeply.",
+};
+
+// Opening (s1 + s3): 25 combos
+const OPENINGS = {
+  'Sinners|IPA':
+    "You take your cinema like you take your beer — grounded, genre-savvy, and not here for anything soft.",
+  'Sinners|Espresso Martini':
+    "You came to feel things and you came prepared. Ryan Coogler and a double shot is a legitimately good combo.",
+  'Sinners|Tiki Drink':
+    "Deep film taste, chaotic drink order. You have range and you know it.",
+  'Sinners|Red Wine':
+    "Cultural weight, deep palate, probably an excellent jacket. You are the full package.",
+  'Sinners|Mocktail':
+    "Clear-headed and fully present. You watched one of last year's most powerful films and didn't need anything to blur the edges.",
+
+  'The Substance|IPA':
+    "You want your cinema like your beer — bold, a little bitter, and slightly unhinged.",
+  'The Substance|Espresso Martini':
+    "Caffeinated and completely unhinged. You watched Demi Moore dissolve and somehow ordered another round.",
+  'The Substance|Tiki Drink':
+    "Chaotic good. Body horror meets tropical drink — and somehow that's a coherent worldview.",
+  'The Substance|Red Wine':
+    "Elegant taste, very dark sensibility. You pair unhinged body horror with a Bordeaux and somehow pull it off.",
+  'The Substance|Mocktail':
+    "You watched one of last year's most disturbing films completely sober. Absolute power move.",
+
+  'Conclave|IPA':
+    "Slow burn suspense and a hoppy pint — you know how to sit with tension.",
+  'Conclave|Espresso Martini':
+    "You need to be fully caffeinated for the papal intrigue and the argument you're already planning.",
+  'Conclave|Tiki Drink':
+    "Vatican thriller meets tropical drink. You contain multitudes and we are here for it.",
+  'Conclave|Red Wine':
+    "A Vatican thriller and a glass of red. The only correct pairing. You have taste.",
+  'Conclave|Mocktail':
+    "You watched a slow-burn political thriller clear-headed and now you have thoughts. We can already tell.",
+
+  'Anora|IPA':
+    "You're a chaotic romantic who shows up with strong opinions and a solid pint.",
+  'Anora|Espresso Martini':
+    "You're a chaotic romantic who shows up 10 minutes late with strong opinions and stronger coffee.",
+  'Anora|Tiki Drink':
+    "You're a chaotic romantic who orders something none of us can pronounce and somehow makes it look right.",
+  'Anora|Red Wine':
+    "You're a chaotic romantic with genuinely good taste — and you cry at films but you'd never admit it.",
+  'Anora|Mocktail':
+    "You're a chaotic romantic running entirely on emotional intelligence. No substances required.",
+
+  'none|IPA':
+    "You're new here but you've already got instincts. Ordering a solid pint at a film club is a good sign.",
+  'none|Espresso Martini':
+    "You're new here but you came ready. An espresso martini at a film club is a strong opening move.",
+  'none|Tiki Drink':
+    "You're new here and you're already ordering the chaotic drink. We love the energy.",
+  'none|Red Wine':
+    "You're new here but you've already got the vibe exactly right. Welcome.",
+  'none|Mocktail':
+    "You're new here and doing it completely clear-headed. We respect the commitment.",
+};
+
+// Middle sentence (s2): 6 options
+const MIDDLES = {
+  'Project Hail Mary':
+    "You want big ideas with a beating heart — the kind of film that makes you feel small and alive at the same time.",
+  'I Love Boosters':
+    "You want cinema that does something — takes a swing, has politics, and makes you laugh and think in the same breath.",
+  'Mother Mary':
+    "You want desire to feel dangerous and cinematic. You are not here for anything safe.",
+  'Camp Miasma':
+    "You believe horror should mean something. You are right, and Jane Schoenbrun agrees with you.",
+  'Forbidden Fruits':
+    "You want genre to do real work — witchy, queer, anarchic, set in a mall. You have vision.",
+  'Exit 8':
+    "You want the kind of film that rewires how you see things. You'll be talking about it for weeks.",
+};
+
+// Closer (s3): 5 options
+const CLOSERS = {
+  'IPA':              "You'll be the one still talking about it at last call. Perfect.",
+  'Espresso Martini': "You'll be the last one at the table and the argument will have been worth it. We need you there.",
+  'Tiki Drink':       "Bring that energy. Film Club needs exactly more of this.",
+  'Red Wine':         "You're going to fit in perfectly. See you there.",
+  'Mocktail':         "You're going to be the most interesting person in the room. We already know it.",
+};
+
+const DRINK_LABELS = {
+  'IPA': 'IPA 🍺', 'Espresso Martini': 'Espresso Martini ☕',
+  'Tiki Drink': 'Tiki Drink 🍹', 'Red Wine': 'Red Wine 🍷', 'Mocktail': 'Mocktail 🌿',
+};
+
+function buildSummary(s1, s2, s3) {
+  const overrideKey = `${s1}|${s2}|${s3}`;
+  if (OVERRIDES[overrideKey]) return OVERRIDES[overrideKey];
+  const opening = OPENINGS[`${s1}|${s3}`] || OPENINGS[`none|${s3}`];
+  const middle  = MIDDLES[s2]  || '';
+  const closer  = CLOSERS[s3]  || 'We need you at the next one.';
+  return `${opening} ${middle} ${closer}`;
+}
+
+function showSummary() {
+  const { s1, s2, s3 } = picks;
+  if (!s1 || !s2 || !s3) return;
+
+  document.getElementById('quizSummaryText').textContent = buildSummary(s1, s2, s3);
+
+  const chips = document.getElementById('quizChips');
+  chips.innerHTML = [
+    s1 === 'none' ? 'Living under a rock 🪨' : s1,
+    s2 === 'Camp Miasma' ? 'Camp Miasma' : s2,
+    DRINK_LABELS[s3] || s3,
+  ].map(c => `<span class="quiz-chip">${escHtml(c)}</span>`).join('');
+
+  advanceQuiz(3);
+}
+
+document.getElementById('quizForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name  = document.getElementById('quizName').value.trim();
+  const email = document.getElementById('quizEmail').value.trim();
+  if (!name || !email.includes('@')) return;
+  document.getElementById('quizFinalWrap').style.display = 'none';
+  document.getElementById('quizSuccess').classList.add('show');
+});
+
+/* ══════════════════════════════════════
+   FILM BOARD
+══════════════════════════════════════ */
+const STORAGE_FILMS = 'fc_films_v3';
+const STORAGE_VOTES = 'fc_votes_v3';
+
+const SEED = [
+  { id: 1, title: 'Project Hail Mary',
+    why: 'Ryan Gosling wakes up alone in space with no memory — and Earth is dying', votes: 0 },
+  { id: 2, title: 'I Love Boosters',
+    why: 'Keke Palmer leads a crew of shoplifters taking down a ruthless fashion mogul. From the director of Sorry to Bother You', votes: 0 },
+  { id: 3, title: 'Mother Mary',
+    why: 'Anne Hathaway as a pop star, Michaela Coel as her estranged designer. Sapphic, dark, and soundtracked by Charli XCX', votes: 0 },
+  { id: 4, title: 'Teenage Sex and Death at Camp Miasma',
+    why: "A queer director making a slasher reboot becomes obsessed with the original film's final girl. Jane Schoenbrun goes full Cronenberg", votes: 0 },
+  { id: 5, title: 'Forbidden Fruits',
+    why: 'A witchy femme cult runs out of a mall after hours. Sapphic horror comedy with bite', votes: 0 },
+  { id: 6, title: 'Exit 8',
+    why: 'Trapped in an endless subway corridor — spot the anomaly or start over. Japanese psychological thriller, just opened', votes: 0 },
+];
+
+function loadFilms() {
+  try {
+    const s = localStorage.getItem(STORAGE_FILMS);
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  const f = SEED.map(x => ({ ...x }));
+  saveFilms(f);
+  return f;
+}
+function saveFilms(f) { try { localStorage.setItem(STORAGE_FILMS, JSON.stringify(f)); } catch(e) {} }
+function loadVotes()  { try { return JSON.parse(localStorage.getItem(STORAGE_VOTES) || '{}'); } catch(e) { return {}; } }
+function saveVotes(v) { try { localStorage.setItem(STORAGE_VOTES, JSON.stringify(v)); } catch(e) {} }
+
+function renderLeaderboard(sorted) {
+  const lb   = document.getElementById('leaderboard');
+  const top3 = sorted.slice(0, 3);
+  if (!top3.length) {
+    lb.innerHTML = '<div style="padding:20px 0;font-size:13px;color:var(--cream);opacity:0.4;">No votes yet — be the first.</div>';
+    return;
+  }
+  lb.innerHTML = top3.map((film, i) => `
+    <div class="lb-item lb-item-${i + 1}">
+      <div class="lb-rank">#${i + 1}</div>
+      <div class="lb-title">${escHtml(film.title)}</div>
+      <div class="lb-count">${film.votes} vote${film.votes !== 1 ? 's' : ''}</div>
+    </div>`).join('');
+}
+
+function renderBoard() {
+  const films = loadFilms().sort((a, b) => b.votes - a.votes);
+  const votes = loadVotes();
+
+  document.getElementById('boardGrid').innerHTML = films.map(film => `
+    <div class="board-card">
+      <div class="board-card-title">${escHtml(film.title)}</div>
+      ${film.why ? `<div class="board-card-why">"${escHtml(film.why)}"</div>` : ''}
+      <button class="btn-vote${votes[film.id] ? ' voted' : ''}"
+              onclick="castVote(${film.id})"
+              aria-label="Vote for ${escHtml(film.title)}">
+        <span>Want to see this 👍</span>
+        <span class="btn-vote-count">${film.votes}</span>
+      </button>
+    </div>`).join('');
+
+  renderLeaderboard(films);
+}
+
+function castVote(id) {
+  const votes = loadVotes();
+  const films = loadFilms();
+  const film  = films.find(f => f.id === id);
+  if (!film) return;
+  if (votes[id]) { film.votes = Math.max(0, film.votes - 1); delete votes[id]; }
+  else           { film.votes++; votes[id] = true; }
+  saveFilms(films);
+  saveVotes(votes);
+  renderBoard();
+}
+
+document.getElementById('boardForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const title = document.getElementById('boardTitle').value.trim();
+  if (!title) return;
+  const why   = document.getElementById('boardWhy').value.trim();
+  const films = loadFilms();
+  const newId = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
+  films.push({ id: newId, title, why, votes: 0 });
+  saveFilms(films);
+  this.reset();
+  renderBoard();
+  document.getElementById('boardGrid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+renderBoard();
+</script>
+</body>
+</html>
