@@ -711,13 +711,87 @@
     .board-add-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .board-add-form .btn-green { grid-column: 1 / -1; font-size: 18px; }
 
+    /* Poster search preview in add form */
+    .board-poster-preview {
+      grid-column: 1 / -1;
+      display: none;
+      align-items: center;
+      gap: 16px;
+      background: var(--gray2);
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+    }
+    .board-poster-preview.visible { display: flex; }
+    .board-poster-preview img {
+      width: 52px;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #111;
+    }
+    .board-poster-preview-info { flex: 1; min-width: 0; }
+    .board-poster-preview-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 17px;
+      letter-spacing: 0.04em;
+      color: var(--green);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .board-poster-preview-year {
+      font-size: 12px;
+      color: var(--cream);
+      opacity: 0.5;
+    }
+    .board-poster-preview-status {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      opacity: 0.55;
+      flex-shrink: 0;
+    }
+    .board-poster-preview-status.searching { color: var(--cream); }
+
     /* Full board */
     .board-grid-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cream); opacity: 0.45; margin-bottom: 20px; }
     .board-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
 
-    .board-card { background: var(--gray); padding: 28px 24px; display: flex; flex-direction: column; gap: 10px; transition: background 0.2s; }
+    .board-card { background: var(--gray); display: flex; flex-direction: column; transition: background 0.2s; overflow: hidden; }
     .board-card:hover { background: var(--gray2); }
-    .board-card-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(18px, 2vw, 26px); line-height: 1.05; letter-spacing: 0.02em; color: var(--off-white); }
+
+    /* Poster image on board card */
+    .board-card-poster {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display: block;
+      background: #151515;
+    }
+    .board-card-poster-placeholder {
+      width: 100%;
+      aspect-ratio: 2/3;
+      background: #151515;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .board-card-poster-placeholder-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(16px, 2vw, 24px);
+      letter-spacing: 0.06em;
+      color: var(--green);
+      text-align: center;
+      padding: 16px;
+      line-height: 1.2;
+      opacity: 0.4;
+    }
+
+    .board-card-body { padding: 20px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .board-card-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(16px, 1.8vw, 22px); line-height: 1.05; letter-spacing: 0.02em; color: var(--off-white); }
     .board-card-why { font-style: italic; font-size: 13px; color: var(--cream); opacity: 0.65; line-height: 1.5; flex: 1; }
 
     .btn-vote {
@@ -755,6 +829,7 @@
     .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.12em; opacity: 0.4; }
     .footer-logo span { color: var(--green); opacity: 1; }
     .footer-copy { font-size: 11px; color: var(--cream); opacity: 0.25; letter-spacing: 0.1em; }
+    .footer-tmdb { font-size: 10px; color: var(--cream); opacity: 0.2; letter-spacing: 0.04em; }
 
     /* ════════════════════════════════
        RESPONSIVE
@@ -1158,8 +1233,17 @@
     <div class="board-add-section">
       <div class="board-add-label">ADD A FILM TO THE BOARD</div>
       <form class="board-add-form" id="boardForm" novalidate>
-        <input type="text" id="boardTitle" placeholder="Film title" required />
+        <input type="text" id="boardTitle" placeholder="Film title — we'll find the poster automatically" required autocomplete="off" />
         <textarea id="boardWhy" placeholder="Why do you want to see this?"></textarea>
+        <div class="board-poster-preview" id="boardPosterPreview">
+          <img id="boardPosterImg" src="" alt="" />
+          <div class="board-poster-preview-info">
+            <div class="board-poster-preview-title" id="boardPosterTitle"></div>
+            <div class="board-poster-preview-year"  id="boardPosterYear"></div>
+          </div>
+          <div class="board-poster-preview-status" id="boardPosterStatus">POSTER FOUND ✓</div>
+        </div>
+        <input type="hidden" id="boardPosterPath" />
         <button type="submit" class="btn-green">ADD TO THE BOARD</button>
       </form>
     </div>
@@ -1205,6 +1289,7 @@
 <footer>
   <div class="footer-logo">FILM<span>&#x25CF;</span>CLUB</div>
   <div class="footer-copy">Oakland, CA &nbsp;—&nbsp; Arthouse &amp; Indie &nbsp;— &copy; 2024</div>
+  <div class="footer-tmdb">This product uses the TMDB API but is not endorsed or certified by TMDB.</div>
 </footer>
 
 <script>
@@ -1406,24 +1491,53 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
 });
 
 /* ══════════════════════════════════════
+   TMDB
+══════════════════════════════════════ */
+const TMDB_TOKEN  = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NzY4YmMyNGUyMzllYzk4MjA3YTRjOTBiNGE5YjlmYSIsIm5iZiI6MTc3NjExODY3My4wMjIsInN1YiI6IjY5ZGQ2YjkxYTAzN2E3N2YwNzAyN2ZiNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxUZezsehRWfIhWWRytm2GntFJUSLrjTf63AgOZ5t0c';
+const TMDB_IMG    = 'https://image.tmdb.org/t/p/w500';
+const TMDB_SEARCH = 'https://api.themoviedb.org/3/search/movie';
+
+async function tmdbSearch(title) {
+  try {
+    const url  = `${TMDB_SEARCH}?query=${encodeURIComponent(title)}&language=en-US&page=1&include_adult=false`;
+    const res  = await fetch(url, { headers: { Authorization: `Bearer ${TMDB_TOKEN}`, 'Content-Type': 'application/json' } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const hit  = data.results && data.results[0];
+    if (!hit) return null;
+    return {
+      poster: hit.poster_path  || null,
+      title:  hit.title        || title,
+      year:   hit.release_date ? hit.release_date.slice(0, 4) : '',
+    };
+  } catch(e) { return null; }
+}
+
+/* ══════════════════════════════════════
    FILM BOARD
 ══════════════════════════════════════ */
-const STORAGE_FILMS = 'fc_films_v3';
-const STORAGE_VOTES = 'fc_votes_v3';
+const STORAGE_FILMS = 'fc_films_v4';
+const STORAGE_VOTES = 'fc_votes_v4';
 
 const SEED = [
   { id: 1, title: 'Project Hail Mary',
-    why: 'Ryan Gosling wakes up alone in space with no memory — and Earth is dying', votes: 0 },
+    why: 'Ryan Gosling wakes up alone in space with no memory — and Earth is dying',
+    votes: 0, poster: null },
   { id: 2, title: 'I Love Boosters',
-    why: 'Keke Palmer leads a crew of shoplifters taking down a ruthless fashion mogul. From the director of Sorry to Bother You', votes: 0 },
+    why: 'Keke Palmer leads a crew of shoplifters taking down a ruthless fashion mogul. From the director of Sorry to Bother You',
+    votes: 0, poster: null },
   { id: 3, title: 'Mother Mary',
-    why: 'Anne Hathaway as a pop star, Michaela Coel as her estranged designer. Sapphic, dark, and soundtracked by Charli XCX', votes: 0 },
+    why: 'Anne Hathaway as a pop star, Michaela Coel as her estranged designer. Sapphic, dark, and soundtracked by Charli XCX',
+    votes: 0, poster: null },
   { id: 4, title: 'Teenage Sex and Death at Camp Miasma',
-    why: "A queer director making a slasher reboot becomes obsessed with the original film's final girl. Jane Schoenbrun goes full Cronenberg", votes: 0 },
+    why: "A queer director making a slasher reboot becomes obsessed with the original film's final girl. Jane Schoenbrun goes full Cronenberg",
+    votes: 0, poster: null },
   { id: 5, title: 'Forbidden Fruits',
-    why: 'A witchy femme cult runs out of a mall after hours. Sapphic horror comedy with bite', votes: 0 },
+    why: 'A witchy femme cult runs out of a mall after hours. Sapphic horror comedy with bite',
+    votes: 0, poster: null },
   { id: 6, title: 'Exit 8',
-    why: 'Trapped in an endless subway corridor — spot the anomaly or start over. Japanese psychological thriller, just opened', votes: 0 },
+    why: 'Trapped in an endless subway corridor — spot the anomaly or start over. Japanese psychological thriller, just opened',
+    votes: 0, poster: null },
 ];
 
 function loadFilms() {
@@ -1438,6 +1552,33 @@ function loadFilms() {
 function saveFilms(f) { try { localStorage.setItem(STORAGE_FILMS, JSON.stringify(f)); } catch(e) {} }
 function loadVotes()  { try { return JSON.parse(localStorage.getItem(STORAGE_VOTES) || '{}'); } catch(e) { return {}; } }
 function saveVotes(v) { try { localStorage.setItem(STORAGE_VOTES, JSON.stringify(v)); } catch(e) {} }
+
+/* Fetch posters for any seed film that doesn't have one yet */
+async function hydratePostersMissing() {
+  const films   = loadFilms();
+  const missing = films.filter(f => !f.poster);
+  if (!missing.length) return;
+
+  await Promise.all(missing.map(async film => {
+    const result = await tmdbSearch(film.title);
+    if (result && result.poster) film.poster = result.poster;
+  }));
+
+  saveFilms(films);
+  renderBoard();
+}
+
+function posterHTML(film) {
+  if (film.poster) {
+    return `<img class="board-card-poster"
+                 src="${TMDB_IMG}${escHtml(film.poster)}"
+                 alt="${escHtml(film.title)} poster"
+                 loading="lazy" />`;
+  }
+  return `<div class="board-card-poster-placeholder">
+            <div class="board-card-poster-placeholder-text">${escHtml(film.title)}</div>
+          </div>`;
+}
 
 function renderLeaderboard(sorted) {
   const lb   = document.getElementById('leaderboard');
@@ -1460,14 +1601,17 @@ function renderBoard() {
 
   document.getElementById('boardGrid').innerHTML = films.map(film => `
     <div class="board-card">
-      <div class="board-card-title">${escHtml(film.title)}</div>
-      ${film.why ? `<div class="board-card-why">"${escHtml(film.why)}"</div>` : ''}
-      <button class="btn-vote${votes[film.id] ? ' voted' : ''}"
-              onclick="castVote(${film.id})"
-              aria-label="Vote for ${escHtml(film.title)}">
-        <span>Want to see this 👍</span>
-        <span class="btn-vote-count">${film.votes}</span>
-      </button>
+      ${posterHTML(film)}
+      <div class="board-card-body">
+        <div class="board-card-title">${escHtml(film.title)}</div>
+        ${film.why ? `<div class="board-card-why">"${escHtml(film.why)}"</div>` : ''}
+        <button class="btn-vote${votes[film.id] ? ' voted' : ''}"
+                onclick="castVote(${film.id})"
+                aria-label="Vote for ${escHtml(film.title)}">
+          <span>Want to see this 👍</span>
+          <span class="btn-vote-count">${film.votes}</span>
+        </button>
+      </div>
     </div>`).join('');
 
   renderLeaderboard(films);
@@ -1485,16 +1629,63 @@ function castVote(id) {
   renderBoard();
 }
 
+/* ── Add film form with live TMDB poster search ── */
+let searchDebounce = null;
+let pendingPoster  = null;
+
+document.getElementById('boardTitle').addEventListener('input', function() {
+  const title = this.value.trim();
+  const preview = document.getElementById('boardPosterPreview');
+
+  clearTimeout(searchDebounce);
+  pendingPoster = null;
+  document.getElementById('boardPosterPath').value = '';
+
+  if (title.length < 2) {
+    preview.classList.remove('visible');
+    return;
+  }
+
+  // Show searching state immediately
+  preview.classList.add('visible');
+  document.getElementById('boardPosterImg').src   = '';
+  document.getElementById('boardPosterTitle').textContent = title;
+  document.getElementById('boardPosterYear').textContent  = '';
+  const statusEl = document.getElementById('boardPosterStatus');
+  statusEl.textContent = 'SEARCHING…';
+  statusEl.classList.add('searching');
+
+  searchDebounce = setTimeout(async () => {
+    const result = await tmdbSearch(title);
+    if (!result || !result.poster) {
+      statusEl.textContent = 'NO POSTER FOUND';
+      statusEl.classList.add('searching');
+      document.getElementById('boardPosterImg').src = '';
+      return;
+    }
+    pendingPoster = result.poster;
+    document.getElementById('boardPosterPath').value       = result.poster;
+    document.getElementById('boardPosterImg').src          = `${TMDB_IMG}${result.poster}`;
+    document.getElementById('boardPosterTitle').textContent = result.title;
+    document.getElementById('boardPosterYear').textContent  = result.year;
+    statusEl.textContent = 'POSTER FOUND ✓';
+    statusEl.classList.remove('searching');
+  }, 500);
+});
+
 document.getElementById('boardForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const title = document.getElementById('boardTitle').value.trim();
   if (!title) return;
-  const why   = document.getElementById('boardWhy').value.trim();
-  const films = loadFilms();
-  const newId = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
-  films.push({ id: newId, title, why, votes: 0 });
+  const why    = document.getElementById('boardWhy').value.trim();
+  const poster = document.getElementById('boardPosterPath').value || null;
+  const films  = loadFilms();
+  const newId  = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
+  films.push({ id: newId, title, why, votes: 0, poster });
   saveFilms(films);
   this.reset();
+  pendingPoster = null;
+  document.getElementById('boardPosterPreview').classList.remove('visible');
   renderBoard();
   document.getElementById('boardGrid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
@@ -1504,6 +1695,7 @@ function escHtml(s) {
 }
 
 renderBoard();
+hydratePostersMissing();
 </script>
 </body>
 </html>
