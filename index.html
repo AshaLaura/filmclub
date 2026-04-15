@@ -1351,10 +1351,11 @@ document.getElementById('signupForm').addEventListener('submit', async function(
   btn.disabled = true;
   btn.textContent = 'SENDING…';
 
+  const f = AT_FIELDS.quiz;
   const fields = {
-    'Name':      name,
-    'Email':     email,
-    'Submitted': new Date().toISOString(),
+    [f.name]:      name,
+    [f.email]:     email,
+    [f.submitted]: new Date().toISOString(),
   };
 
   const result = await airtableSend(AT_TABLES.quiz, fields);
@@ -1596,17 +1597,18 @@ document.getElementById('quizForm').addEventListener('submit', async function(e)
   btn.disabled = true;
   btn.textContent = 'SENDING…';
 
-  /* Build Airtable fields */
+  /* Build Airtable fields using field IDs */
   const watchedLabels = picks.s1.map(v => v === 'none' ? 'None of these' : v);
+  const f = AT_FIELDS.quiz;
   const fields = {
-    'Name':              name,
-    'Email':             email,
-    'Watched Last Year': watchedLabels.join(', '),
-    'Next Film Vote':    picks.s2 || '',
-    'Drink':             picks.s3 || '',
-    'Submitted':         new Date().toISOString(),
+    [f.name]:      name,
+    [f.email]:     email,
+    [f.watched]:   watchedLabels.join(', '),
+    [f.nextFilm]:  picks.s2 || '',
+    [f.drink]:     picks.s3 || '',
+    [f.submitted]: new Date().toISOString(),
   };
-  if (phone) fields['Phone'] = phone;
+  if (phone) fields[f.phone] = phone;
 
   const result = await airtableSend(AT_TABLES.quiz, fields);
 
@@ -1662,6 +1664,30 @@ const AT_TABLES = {
   quiz:        'tblkIFOCshkycyLoJ',  // Quiz Responses
   boardVotes:  'tbl0cItMJWnCb8YuF',  // Film Board Votes
   boardFilms:  'tblNTdslY26RUU5MO',  // Film Board Submissions
+};
+/* Field IDs — more reliable than names across API versions */
+const AT_FIELDS = {
+  quiz: {
+    name:        'fldb3QLTKZEdXIZvJ',
+    email:       'fld3ZJ2wH6MevLZoD',
+    phone:       'fldapLKr82MbpBcVx',
+    watched:     'fldjBrnYD69jFye9v',
+    nextFilm:    'fldYVeaY6AK8FRviT',
+    drink:       'fldPjVq6KeodAweVu',
+    submitted:   'fldprDzgIZlAmPspc',
+  },
+  boardVotes: {
+    film:        'fldDGSLqAfZz88XZf',
+    votes:       'fld0BvGtUU5mgxAkV',
+    lastVote:    'fldwP4OdwMFilTuyO',
+    voterEmail:  'fldlpdD1shpPvMK2Z',
+  },
+  boardFilms: {
+    filmTitle:   'fldGAt0sO8uiewbQS',
+    why:         'fld8XWE3YDY4nF8O0',
+    email:       'fldWevKfZvbmWVoHM',
+    submittedAt: 'fldMymjQ9snmGYB0b',
+  },
 };
 
 async function airtableSend(tableId, fields) {
@@ -1854,10 +1880,11 @@ function castVote(id) {
 
   /* Send new votes (not un-votes) to Airtable */
   if (!wasVoted) {
+    const bv = AT_FIELDS.boardVotes;
     airtableSend(AT_TABLES.boardVotes, {
-      'Film':     film.title,
-      'Votes':    1,
-      'Last Vote': new Date().toISOString(),
+      [bv.film]:     film.title,
+      [bv.votes]:    1,
+      [bv.lastVote]: new Date().toISOString(),
     });
   }
 }
@@ -1924,11 +1951,12 @@ document.getElementById('boardForm').addEventListener('submit', async function(e
   saveFilms(films);
 
   /* Send to Airtable Film Board Submissions */
+  const bf = AT_FIELDS.boardFilms;
   const fields = {
-    'Film Title':   title,
-    'Submitted At': new Date().toISOString().slice(0, 10),
+    [bf.filmTitle]:   title,
+    [bf.submittedAt]: new Date().toISOString().slice(0, 10),
   };
-  if (why)   fields['Why']   = why;
+  if (why) fields[bf.why] = why;
 
   const result = await airtableSend(AT_TABLES.boardFilms, fields);
 
