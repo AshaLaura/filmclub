@@ -5,6 +5,7 @@
 *.env.*
 
 # Files that commonly contain API keys / tokens
+config.js
 secrets.js
 secrets.json
 config.local.js

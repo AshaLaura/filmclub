@@ -1336,17 +1336,37 @@
   <div class="footer-tmdb">This product uses the TMDB API but is not endorsed or certified by TMDB.</div>
 </footer>
 
+<script src="config.js"></script>
 <script>
 /* ══════════════════════════════════════
    SIGNUP FORM
 ══════════════════════════════════════ */
-document.getElementById('signupForm').addEventListener('submit', function(e) {
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const name  = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   if (!name || !email.includes('@')) return;
-  this.style.display = 'none';
-  document.getElementById('signupSuccess').classList.add('show');
+
+  const btn = this.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'SENDING…';
+
+  const fields = {
+    'Name':      name,
+    'Email':     email,
+    'Submitted': new Date().toISOString(),
+  };
+
+  const result = await airtableSend(AT_TABLES.quiz, fields);
+
+  if (result.skipped || result.ok) {
+    this.style.display = 'none';
+    document.getElementById('signupSuccess').classList.add('show');
+  } else {
+    btn.disabled = false;
+    btn.textContent = "I'M IN — PUT ME ON THE LIST";
+    showFormMsg(this, 'Something went wrong — try again in a moment.', true);
+  }
 });
 
 /* ══════════════════════════════════════
@@ -1565,19 +1585,48 @@ function showSummary() {
   advanceQuiz(3);
 }
 
-document.getElementById('quizForm').addEventListener('submit', function(e) {
+document.getElementById('quizForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const name  = document.getElementById('quizName').value.trim();
   const email = document.getElementById('quizEmail').value.trim();
+  const phone = document.getElementById('quizPhone').value.trim();
   if (!name || !email.includes('@')) return;
-  document.getElementById('quizFinalWrap').style.display = 'none';
-  document.getElementById('quizSuccess').classList.add('show');
+
+  const btn = this.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'SENDING…';
+
+  /* Build Airtable fields */
+  const watchedLabels = picks.s1.map(v => v === 'none' ? 'None of these' : v);
+  const fields = {
+    'Name':              name,
+    'Email':             email,
+    'Watched Last Year': watchedLabels.join(', '),
+    'Next Film Vote':    picks.s2 || '',
+    'Drink':             picks.s3 || '',
+    'Submitted':         new Date().toISOString(),
+  };
+  if (phone) fields['Phone'] = phone;
+
+  const result = await airtableSend(AT_TABLES.quiz, fields);
+
+  if (result.skipped || result.ok) {
+    document.getElementById('quizFinalWrap').style.display = 'none';
+    document.getElementById('quizSuccess').classList.add('show');
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'PUT ME ON THE LIST';
+    showFormMsg(this, 'Something went wrong — try again in a moment.', true);
+  }
 });
 
 /* ══════════════════════════════════════
    TMDB
 ══════════════════════════════════════ */
-const TMDB_TOKEN  = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NzY4YmMyNGUyMzllYzk4MjA3YTRjOTBiNGE5YjlmYSIsIm5iZiI6MTc3NjExODY3My4wMjIsInN1YiI6IjY5ZGQ2YjkxYTAzN2E3N2YwNzAyN2ZiNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxUZezsehRWfIhWWRytm2GntFJUSLrjTf63AgOZ5t0c';
+if (typeof CONFIG === 'undefined') {
+  console.error('[Film Club] config.js failed to load — API calls will be skipped. Make sure config.js is in the same folder as index.html.');
+}
+const TMDB_TOKEN  = (typeof CONFIG !== 'undefined') ? CONFIG.TMDB_TOKEN : '';
 const TMDB_IMG    = 'https://image.tmdb.org/t/p/w500';
 const TMDB_SEARCH = 'https://api.themoviedb.org/3/search/movie';
 
@@ -1605,14 +1654,75 @@ async function tmdbSearch(title, year) {
   } catch(e) { return null; }
 }
 
+/* ══════════════════════════════════════
+   AIRTABLE
+══════════════════════════════════════ */
+const AT_BASE = 'https://api.airtable.com/v0/';
+const AT_TABLES = {
+  quiz:        'tblkIFOCshkycyLoJ',  // Quiz Responses
+  boardVotes:  'tbl0cItMJWnCb8YuF',  // Film Board Votes
+  boardFilms:  'tblNTdslY26RUU5MO',  // Film Board Submissions
+};
+
+async function airtableSend(tableId, fields) {
+  const token  = (typeof CONFIG !== 'undefined') ? CONFIG.AIRTABLE_TOKEN : '';
+  const baseId = (typeof CONFIG !== 'undefined') ? CONFIG.AIRTABLE_BASE_ID : '';
+  if (!token || !baseId || token === 'your_airtable_token_here') {
+    console.warn('[Airtable] Skipped — no token/baseId configured.');
+    return { ok: false, skipped: true };
+  }
+  console.log('[Airtable] Sending to table:', tableId, fields);
+  try {
+    const res = await fetch(`${AT_BASE}${baseId}/${tableId}`, {
+      method:  'POST',
+      headers: {
+        Authorization:  `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fields }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) console.error('[Airtable] Error', res.status, body);
+    else         console.log('[Airtable] Success', body);
+    return { ok: res.ok, status: res.status };
+  } catch(e) {
+    console.error('[Airtable] Fetch failed:', e.message);
+    return { ok: false, error: e.message };
+  }
+}
+
+/* Subtle inline feedback helpers */
+function showFormMsg(el, msg, isError) {
+  let feedback = el.querySelector('.form-feedback');
+  if (!feedback) {
+    feedback = document.createElement('p');
+    feedback.className = 'form-feedback';
+    el.appendChild(feedback);
+  }
+  feedback.textContent = msg;
+  feedback.style.cssText = `
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    margin-top: 8px;
+    color: ${isError ? '#ff6b6b' : 'var(--green)'};
+    opacity: 0.85;
+  `;
+}
+
 /* Inject TMDB posters into quiz cards that have data-tmdb-title */
 async function hydrateQuizPosters() {
+  if (!TMDB_TOKEN) { console.warn('[TMDB] No token — quiz posters skipped.'); return; }
   const cards = document.querySelectorAll('.qfilm-card[data-tmdb-title]');
+  console.log('[TMDB] Fetching quiz posters for', cards.length, 'cards');
   await Promise.all(Array.from(cards).map(async card => {
     const title  = card.dataset.tmdbTitle;
     const year   = card.dataset.tmdbYear || '';
     const result = await tmdbSearch(title, year);
-    if (!result || !result.poster) return;
+    if (!result || !result.poster) {
+      console.warn('[TMDB] No poster found for:', title);
+      return;
+    }
+    console.log('[TMDB] Poster found for:', title, result.poster);
     /* Inject poster img as first child of the card */
     const img = document.createElement('img');
     img.className  = 'qfilm-poster';
@@ -1734,11 +1844,22 @@ function castVote(id) {
   const films = loadFilms();
   const film  = films.find(f => f.id === id);
   if (!film) return;
-  if (votes[id]) { film.votes = Math.max(0, film.votes - 1); delete votes[id]; }
-  else           { film.votes++; votes[id] = true; }
+
+  const wasVoted = !!votes[id];
+  if (wasVoted) { film.votes = Math.max(0, film.votes - 1); delete votes[id]; }
+  else          { film.votes++; votes[id] = true; }
   saveFilms(films);
   saveVotes(votes);
   renderBoard();
+
+  /* Send new votes (not un-votes) to Airtable */
+  if (!wasVoted) {
+    airtableSend(AT_TABLES.boardVotes, {
+      'Film':     film.title,
+      'Votes':    1,
+      'Last Vote': new Date().toISOString(),
+    });
+  }
 }
 
 /* ── Add film form with live TMDB poster search ── */
@@ -1785,20 +1906,45 @@ document.getElementById('boardTitle').addEventListener('input', function() {
   }, 500);
 });
 
-document.getElementById('boardForm').addEventListener('submit', function(e) {
+document.getElementById('boardForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const title = document.getElementById('boardTitle').value.trim();
   if (!title) return;
   const why    = document.getElementById('boardWhy').value.trim();
   const poster = document.getElementById('boardPosterPath').value || null;
-  const films  = loadFilms();
-  const newId  = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
+
+  const btn = this.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'ADDING…';
+
+  /* Add to local board immediately */
+  const films = loadFilms();
+  const newId = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
   films.push({ id: newId, title, why, votes: 0, poster });
   saveFilms(films);
+
+  /* Send to Airtable Film Board Submissions */
+  const fields = {
+    'Film Title':   title,
+    'Submitted At': new Date().toISOString().slice(0, 10),
+  };
+  if (why)   fields['Why']   = why;
+
+  const result = await airtableSend(AT_TABLES.boardFilms, fields);
+
   this.reset();
   pendingPoster = null;
   document.getElementById('boardPosterPreview').classList.remove('visible');
+  btn.disabled = false;
+  btn.textContent = 'ADD TO THE BOARD';
   renderBoard();
+
+  if (result.ok || result.skipped) {
+    showFormMsg(this, '✓ Added to the board', false);
+  } else {
+    showFormMsg(this, 'Added locally — Airtable sync failed, will retry next session.', true);
+  }
+
   document.getElementById('boardGrid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
 
