@@ -499,19 +499,21 @@
     }
     .qfilm-poster.loaded { opacity: 1; }
     /* Gradient over poster so title stays legible */
-    .qfilm-card.has-poster .qfilm-inner::before {
+    .qfilm-card.has-poster::after {
       content: '';
       position: absolute;
       inset: 0;
       background: linear-gradient(to top,
-        rgba(0,0,0,0.92) 0%,
-        rgba(0,0,0,0.3) 55%,
-        rgba(0,0,0,0.1) 100%);
+        rgba(0,0,0,0.88) 0%,
+        rgba(0,0,0,0.35) 50%,
+        rgba(0,0,0,0.08) 100%);
       z-index: 1;
       pointer-events: none;
     }
-    .qfilm-card.has-poster .qfilm-title   { position: relative; z-index: 2; }
+    .qfilm-card.has-poster .qfilm-inner   { z-index: 2; position: relative; }
     .qfilm-card.has-poster .qfilm-overlay { z-index: 3; }
+    .qfilm-card.has-poster .qfilm-desc-mobile,
+    .qfilm-card.has-poster .qfilm-trailer-mobile { position: relative; z-index: 2; }
 
     /* ── Drink card grid ── */
     .qgrid-drinks {
@@ -1579,13 +1581,21 @@ const TMDB_TOKEN  = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NzY4YmMyNGUyMzllYzk4MjA3YT
 const TMDB_IMG    = 'https://image.tmdb.org/t/p/w500';
 const TMDB_SEARCH = 'https://api.themoviedb.org/3/search/movie';
 
-async function tmdbSearch(title) {
+async function tmdbSearch(title, year) {
   try {
-    const url  = `${TMDB_SEARCH}?query=${encodeURIComponent(title)}&language=en-US&page=1&include_adult=false`;
+    let url = `${TMDB_SEARCH}?query=${encodeURIComponent(title)}&language=en-US&page=1&include_adult=false`;
+    if (year) url += `&primary_release_year=${year}`;
     const res  = await fetch(url, { headers: { Authorization: `Bearer ${TMDB_TOKEN}`, 'Content-Type': 'application/json' } });
     if (!res.ok) return null;
     const data = await res.json();
-    const hit  = data.results && data.results[0];
+    /* If year-filtered search has no results, retry without year */
+    let hit = data.results && data.results[0];
+    if (!hit && year) {
+      const res2  = await fetch(`${TMDB_SEARCH}?query=${encodeURIComponent(title)}&language=en-US&page=1&include_adult=false`,
+        { headers: { Authorization: `Bearer ${TMDB_TOKEN}`, 'Content-Type': 'application/json' } });
+      const data2 = res2.ok ? await res2.json() : null;
+      hit = data2 && data2.results && data2.results[0];
+    }
     if (!hit) return null;
     return {
       poster: hit.poster_path  || null,
@@ -1601,10 +1611,9 @@ async function hydrateQuizPosters() {
   await Promise.all(Array.from(cards).map(async card => {
     const title  = card.dataset.tmdbTitle;
     const year   = card.dataset.tmdbYear || '';
-    const query  = year ? `${title} ${year}` : title;
-    const result = await tmdbSearch(query);
+    const result = await tmdbSearch(title, year);
     if (!result || !result.poster) return;
-    /* Build & inject poster img as first child of the card */
+    /* Inject poster img as first child of the card */
     const img = document.createElement('img');
     img.className  = 'qfilm-poster';
     img.alt        = title + ' poster';
