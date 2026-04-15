@@ -6,6 +6,9 @@
 
 # Files that commonly contain API keys / tokens
 config.js
+
+# Local dev helper
+open-locally.command
 secrets.js
 secrets.json
 config.local.js

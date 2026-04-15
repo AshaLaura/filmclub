@@ -1625,10 +1625,7 @@ document.getElementById('quizForm').addEventListener('submit', async function(e)
 /* ══════════════════════════════════════
    TMDB
 ══════════════════════════════════════ */
-if (typeof CONFIG === 'undefined') {
-  console.error('[Film Club] config.js failed to load — API calls will be skipped. Make sure config.js is in the same folder as index.html.');
-}
-const TMDB_TOKEN  = (typeof CONFIG !== 'undefined') ? CONFIG.TMDB_TOKEN : '';
+const TMDB_TOKEN = (typeof CONFIG !== 'undefined' && CONFIG.TMDB_TOKEN) ? CONFIG.TMDB_TOKEN : '';
 const TMDB_IMG    = 'https://image.tmdb.org/t/p/w500';
 const TMDB_SEARCH = 'https://api.themoviedb.org/3/search/movie';
 
@@ -1691,8 +1688,8 @@ const AT_FIELDS = {
 };
 
 async function airtableSend(tableId, fields) {
-  const token  = (typeof CONFIG !== 'undefined') ? CONFIG.AIRTABLE_TOKEN : '';
-  const baseId = (typeof CONFIG !== 'undefined') ? CONFIG.AIRTABLE_BASE_ID : '';
+  const token  = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_TOKEN) ? CONFIG.AIRTABLE_TOKEN : '';
+  const baseId = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_BASE_ID) ? CONFIG.AIRTABLE_BASE_ID : '';
   if (!token || !baseId || token === 'your_airtable_token_here') {
     console.warn('[Airtable] Skipped — no token/baseId configured.');
     return { ok: false, skipped: true };
