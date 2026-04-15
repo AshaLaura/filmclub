@@ -362,11 +362,17 @@
     }
 
     /* ── Film card grids ── */
-    .qgrid-5,
-    .qgrid-6 {
+    .qgrid-5 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
+      margin-bottom: 28px;
+    }
+    /* Step 2: 3 cols mobile = ~30% smaller cards vs 2-col */
+    .qgrid-6 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
       margin-bottom: 28px;
     }
 
@@ -478,6 +484,34 @@
     .qfilm-card.none-card { border-style: dashed; }
     .qfilm-card.none-card .qfilm-inner { flex-direction: column; gap: 8px; }
     .qfilm-none-emoji { font-size: 28px; line-height: 1; }
+
+    /* Quiz card TMDB poster (injected by JS) */
+    .qfilm-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.5s;
+      display: block;
+    }
+    .qfilm-poster.loaded { opacity: 1; }
+    /* Gradient over poster so title stays legible */
+    .qfilm-card.has-poster .qfilm-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+        rgba(0,0,0,0.92) 0%,
+        rgba(0,0,0,0.3) 55%,
+        rgba(0,0,0,0.1) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .qfilm-card.has-poster .qfilm-title   { position: relative; z-index: 2; }
+    .qfilm-card.has-poster .qfilm-overlay { z-index: 3; }
 
     /* ── Drink card grid ── */
     .qgrid-drinks {
@@ -849,7 +883,7 @@
     }
     @media (min-width: 640px) and (max-width: 899px) {
       .qgrid-5      { grid-template-columns: repeat(3, 1fr); }
-      .qgrid-6      { grid-template-columns: repeat(3, 1fr); }
+      .qgrid-6      { grid-template-columns: repeat(4, 1fr); }
       .qgrid-drinks { grid-template-columns: repeat(3, 1fr); }
     }
 
@@ -980,47 +1014,55 @@
     <div class="quiz-step active" id="step-0">
       <div class="qgrid-5" role="group" aria-label="Films from last year">
 
-        <div class="qfilm-card" data-step="0" data-val="Sinners" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="0" data-val="Sinners" data-tmdb-title="Sinners" data-tmdb-year="2025" tabindex="0" role="checkbox" aria-checked="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">SINNERS</div>
             <div class="qfilm-overlay">
               <p class="qfilm-overlay-text">Ryan Coogler's vampire epic set in the Jim Crow South</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Sinners+2025+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
             </div>
           </div>
           <div class="qfilm-desc-mobile">Ryan Coogler's vampire epic set in the Jim Crow South</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Sinners+2025+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="0" data-val="The Substance" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="0" data-val="The Substance" data-tmdb-title="The Substance" data-tmdb-year="2024" tabindex="0" role="checkbox" aria-checked="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">THE SUBSTANCE</div>
             <div class="qfilm-overlay">
               <p class="qfilm-overlay-text">Demi Moore in an unhinged body horror fever dream</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=The+Substance+2024+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
             </div>
           </div>
           <div class="qfilm-desc-mobile">Demi Moore in an unhinged body horror fever dream</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=The+Substance+2024+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="0" data-val="Conclave" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="0" data-val="Conclave" data-tmdb-title="Conclave" data-tmdb-year="2024" tabindex="0" role="checkbox" aria-checked="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">CONCLAVE</div>
             <div class="qfilm-overlay">
               <p class="qfilm-overlay-text">A Vatican thriller that will make you hold your breath</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Conclave+2024+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
             </div>
           </div>
           <div class="qfilm-desc-mobile">A Vatican thriller that will make you hold your breath</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Conclave+2024+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="0" data-val="Anora" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="0" data-val="Anora" data-tmdb-title="Anora" data-tmdb-year="2024" tabindex="0" role="checkbox" aria-checked="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">ANORA</div>
             <div class="qfilm-overlay">
               <p class="qfilm-overlay-text">Sean Baker's Palme d'Or winner. Messy, alive, unforgettable</p>
+              <a class="qfilm-overlay-trailer" href="https://www.youtube.com/results?search_query=Anora+2024+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
             </div>
           </div>
           <div class="qfilm-desc-mobile">Sean Baker's Palme d'Or winner. Messy, alive, unforgettable</div>
+          <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Anora+2024+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card none-card" data-step="0" data-val="none" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card none-card" data-step="0" data-val="none" tabindex="0" role="checkbox" aria-checked="false">
           <div class="qfilm-inner">
             <div class="qfilm-none-emoji">🪨</div>
             <div class="qfilm-title">NONE OF THESE — I'M LIVING UNDER A ROCK</div>
@@ -1030,7 +1072,7 @@
 
       </div>
       <div class="quiz-nav">
-        <span class="quiz-hint">Select one to continue</span>
+        <span class="quiz-hint">Select all that apply</span>
         <button class="btn-next" id="next-0" disabled onclick="advanceQuiz(1)">NEXT →</button>
       </div>
     </div>
@@ -1039,7 +1081,7 @@
     <div class="quiz-step" id="step-1">
       <div class="qgrid-6" role="group" aria-label="Films to watch next">
 
-        <div class="qfilm-card" data-step="1" data-val="Project Hail Mary" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="1" data-val="Project Hail Mary" data-tmdb-title="Project Hail Mary" data-tmdb-year="2025" tabindex="0" role="button" aria-pressed="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">PROJECT HAIL MARY</div>
             <div class="qfilm-overlay">
@@ -1051,7 +1093,7 @@
           <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Project+Hail+Mary+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="1" data-val="I Love Boosters" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="1" data-val="I Love Boosters" data-tmdb-title="I Love Boosters" data-tmdb-year="2026" tabindex="0" role="button" aria-pressed="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">I LOVE BOOSTERS</div>
             <div class="qfilm-overlay">
@@ -1063,7 +1105,7 @@
           <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=I+Love+Boosters+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="1" data-val="Mother Mary" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="1" data-val="Mother Mary" data-tmdb-title="Mother Mary" data-tmdb-year="2025" tabindex="0" role="button" aria-pressed="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">MOTHER MARY</div>
             <div class="qfilm-overlay">
@@ -1075,7 +1117,7 @@
           <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Mother+Mary+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="1" data-val="Camp Miasma" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="1" data-val="Camp Miasma" data-tmdb-title="Teenage Sex and Death at Camp Miasma" data-tmdb-year="2026" tabindex="0" role="button" aria-pressed="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">TEENAGE SEX AND DEATH AT CAMP MIASMA</div>
             <div class="qfilm-overlay">
@@ -1087,7 +1129,7 @@
           <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Teenage+Sex+and+Death+at+Camp+Miasma+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="1" data-val="Forbidden Fruits" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="1" data-val="Forbidden Fruits" data-tmdb-title="Forbidden Fruits" data-tmdb-year="2026" tabindex="0" role="button" aria-pressed="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">FORBIDDEN FRUITS</div>
             <div class="qfilm-overlay">
@@ -1099,7 +1141,7 @@
           <a class="qfilm-trailer-mobile" href="https://www.youtube.com/results?search_query=Forbidden+Fruits+official+trailer" target="_blank" rel="noopener" onclick="event.stopPropagation()">Watch Trailer ▶</a>
         </div>
 
-        <div class="qfilm-card" data-step="1" data-val="Exit 8" tabindex="0" role="button" aria-pressed="false">
+        <div class="qfilm-card" data-step="1" data-val="Exit 8" data-tmdb-title="Exit 8" data-tmdb-year="2025" tabindex="0" role="button" aria-pressed="false">
           <div class="qfilm-inner">
             <div class="qfilm-title">EXIT 8</div>
             <div class="qfilm-overlay">
@@ -1309,14 +1351,15 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
    QUIZ
 ══════════════════════════════════════ */
 const QUESTIONS = [
-  { q: 'WHAT DID YOU\nWATCH LAST YEAR?',  sub: '' },
+  { q: 'WHAT DID YOU\nWATCH LAST YEAR?',  sub: "Select all that apply — watched them all? You're our people." },
   { q: 'WHAT SHOULD\nWE WATCH NEXT?',      sub: '' },
   { q: 'WHAT ARE YOU\nDRINKING?',          sub: 'We love to chat over drinks — help us find your vibe.' },
   { q: "HERE'S YOUR READ.",                sub: '' },
 ];
 
 let currentStep = 0;
-const picks = { s1: null, s2: null, s3: null };
+/* s1 is an array for multi-select (Step 1); s2/s3 stay single strings */
+const picks = { s1: [], s2: null, s3: null };
 
 function renderQuestion(step) {
   const { q, sub } = QUESTIONS[step];
@@ -1328,16 +1371,52 @@ function renderQuestion(step) {
 
 document.querySelectorAll('.qfilm-card, .qdrink-card').forEach(card => {
   function activate() {
-    const step = card.dataset.step;
-    document.querySelectorAll(`[data-step="${step}"]`).forEach(c => {
-      c.classList.remove('chosen');
-      c.setAttribute('aria-pressed', 'false');
-    });
-    card.classList.add('chosen');
-    card.setAttribute('aria-pressed', 'true');
-    picks[`s${parseInt(step) + 1}`] = card.dataset.val;
-    const nb = document.getElementById(`next-${step}`);
-    if (nb) nb.disabled = false;
+    const step    = parseInt(card.dataset.step);
+    const val     = card.dataset.val;
+    const isNone  = val === 'none';
+
+    if (step === 0) {
+      /* ── Step 1: multi-select ── */
+      if (isNone) {
+        /* "Rock" card: clear all film selections, toggle none */
+        document.querySelectorAll('[data-step="0"]:not(.none-card)').forEach(c => {
+          c.classList.remove('chosen');
+          c.setAttribute('aria-checked', 'false');
+        });
+        const alreadyChosen = card.classList.contains('chosen');
+        card.classList.toggle('chosen', !alreadyChosen);
+        card.setAttribute('aria-checked', String(!alreadyChosen));
+        picks.s1 = alreadyChosen ? [] : ['none'];
+      } else {
+        /* Film card: deselect "rock", toggle self */
+        document.querySelectorAll('[data-step="0"].none-card').forEach(c => {
+          c.classList.remove('chosen');
+          c.setAttribute('aria-checked', 'false');
+        });
+        picks.s1 = picks.s1.filter(v => v !== 'none');
+        const alreadyChosen = card.classList.contains('chosen');
+        card.classList.toggle('chosen', !alreadyChosen);
+        card.setAttribute('aria-checked', String(!alreadyChosen));
+        if (alreadyChosen) {
+          picks.s1 = picks.s1.filter(v => v !== val);
+        } else {
+          picks.s1.push(val);
+        }
+      }
+      document.getElementById('next-0').disabled = picks.s1.length === 0;
+
+    } else {
+      /* ── Steps 2 & 3: single select ── */
+      document.querySelectorAll(`[data-step="${step}"]`).forEach(c => {
+        c.classList.remove('chosen');
+        c.setAttribute('aria-pressed', 'false');
+      });
+      card.classList.add('chosen');
+      card.setAttribute('aria-pressed', 'true');
+      picks[`s${step + 1}`] = val;
+      const nb = document.getElementById(`next-${step}`);
+      if (nb) nb.disabled = false;
+    }
   }
   card.addEventListener('click', activate);
   card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
@@ -1467,13 +1546,16 @@ function buildSummary(s1, s2, s3) {
 
 function showSummary() {
   const { s1, s2, s3 } = picks;
-  if (!s1 || !s2 || !s3) return;
+  /* s1 is an array; use first entry for personality system */
+  const s1Primary = s1.length === 0 ? null : s1[0];
+  if (!s1Primary || !s2 || !s3) return;
 
-  document.getElementById('quizSummaryText').textContent = buildSummary(s1, s2, s3);
+  document.getElementById('quizSummaryText').textContent = buildSummary(s1Primary, s2, s3);
 
   const chips = document.getElementById('quizChips');
+  const s1Labels = s1.map(v => v === 'none' ? 'Living under a rock 🪨' : v);
   chips.innerHTML = [
-    s1 === 'none' ? 'Living under a rock 🪨' : s1,
+    ...s1Labels,
     s2 === 'Camp Miasma' ? 'Camp Miasma' : s2,
     DRINK_LABELS[s3] || s3,
   ].map(c => `<span class="quiz-chip">${escHtml(c)}</span>`).join('');
@@ -1513,30 +1595,51 @@ async function tmdbSearch(title) {
   } catch(e) { return null; }
 }
 
+/* Inject TMDB posters into quiz cards that have data-tmdb-title */
+async function hydrateQuizPosters() {
+  const cards = document.querySelectorAll('.qfilm-card[data-tmdb-title]');
+  await Promise.all(Array.from(cards).map(async card => {
+    const title  = card.dataset.tmdbTitle;
+    const year   = card.dataset.tmdbYear || '';
+    const query  = year ? `${title} ${year}` : title;
+    const result = await tmdbSearch(query);
+    if (!result || !result.poster) return;
+    /* Build & inject poster img as first child of the card */
+    const img = document.createElement('img');
+    img.className  = 'qfilm-poster';
+    img.alt        = title + ' poster';
+    img.loading    = 'lazy';
+    img.onload     = () => img.classList.add('loaded');
+    img.src        = `${TMDB_IMG}${result.poster}`;
+    card.insertBefore(img, card.firstChild);
+    card.classList.add('has-poster');
+  }));
+}
+
 /* ══════════════════════════════════════
    FILM BOARD
 ══════════════════════════════════════ */
-const STORAGE_FILMS = 'fc_films_v4';
-const STORAGE_VOTES = 'fc_votes_v4';
+const STORAGE_FILMS = 'fc_films_v5';
+const STORAGE_VOTES = 'fc_votes_v5';
 
 const SEED = [
-  { id: 1, title: 'Project Hail Mary',
-    why: 'Ryan Gosling wakes up alone in space with no memory — and Earth is dying',
+  { id: 1, title: 'I Saw the TV Glow',
+    why: "Jane Schoenbrun's trans horror poem about a TV show that might be real. Deeply unsettling and achingly beautiful",
     votes: 0, poster: null },
-  { id: 2, title: 'I Love Boosters',
-    why: 'Keke Palmer leads a crew of shoplifters taking down a ruthless fashion mogul. From the director of Sorry to Bother You',
+  { id: 2, title: 'Past Lives',
+    why: 'Twenty years, two continents, and one question that never gets answered. The most devastating romance in years',
     votes: 0, poster: null },
-  { id: 3, title: 'Mother Mary',
-    why: 'Anne Hathaway as a pop star, Michaela Coel as her estranged designer. Sapphic, dark, and soundtracked by Charli XCX',
+  { id: 3, title: 'All of Us Strangers',
+    why: 'A lonely screenwriter visits his childhood home and finds his dead parents still living there. Andrew Scott is devastating',
     votes: 0, poster: null },
-  { id: 4, title: 'Teenage Sex and Death at Camp Miasma',
-    why: "A queer director making a slasher reboot becomes obsessed with the original film's final girl. Jane Schoenbrun goes full Cronenberg",
+  { id: 4, title: 'Beau Is Afraid',
+    why: "Ari Aster's three-hour anxiety spiral about a man trying to visit his mother. Completely unhinged. We love it",
     votes: 0, poster: null },
-  { id: 5, title: 'Forbidden Fruits',
-    why: 'A witchy femme cult runs out of a mall after hours. Sapphic horror comedy with bite',
+  { id: 5, title: 'The Substance',
+    why: 'Demi Moore injects herself with a drug that creates a younger, better version of herself. Body horror at its most visceral',
     votes: 0, poster: null },
-  { id: 6, title: 'Exit 8',
-    why: 'Trapped in an endless subway corridor — spot the anomaly or start over. Japanese psychological thriller, just opened',
+  { id: 6, title: 'Anora',
+    why: "Sean Baker's Palme d'Or winner. A Brooklyn sex worker marries a Russian oligarch's son — chaos follows",
     votes: 0, poster: null },
 ];
 
@@ -1696,6 +1799,7 @@ function escHtml(s) {
 
 renderBoard();
 hydratePostersMissing();
+hydrateQuizPosters();
 </script>
 </body>
 </html>
