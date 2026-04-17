@@ -1387,6 +1387,7 @@
       <form class="signup-form" id="signupForm" novalidate>
         <input type="text"  id="signupName"  placeholder="Your name"     autocomplete="name"  required />
         <input type="email" id="signupEmail" placeholder="Email address" autocomplete="email" required />
+        <input type="text"  id="signupCity"  placeholder="Your city (e.g. Oakland)" autocomplete="address-level2" />
         <button type="submit" class="btn-green">I'M IN — PUT ME ON THE LIST</button>
         <p class="signup-form-note">Good films. Real people. Strong drinks. See you there.</p>
       </form>
@@ -1415,6 +1416,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
   e.preventDefault();
   const name  = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
+  const city  = document.getElementById('signupCity').value.trim();
   if (!name || !email.includes('@')) return;
 
   const btn = this.querySelector('button[type="submit"]');
@@ -1427,6 +1429,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     [f.email]:      email,
     [f.signedUpAt]: new Date().toISOString(),
   };
+  if (city) fields[f.city] = city;
 
   const result = await airtableSend(AT_TABLES.mailingList, fields);
 
@@ -1799,6 +1802,7 @@ const AT_FIELDS = {
     name:       'fldSVLqUGSfnOxMXu',
     email:      'fldqY8CdORhw1RHGv',
     signedUpAt: 'fldTzGVeWaWhSJ7l4',
+    city:       'fldU5D4r2D2A8oDDv',
   },
 };
 
