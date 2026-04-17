@@ -1625,7 +1625,10 @@ document.getElementById('quizForm').addEventListener('submit', async function(e)
 /* ══════════════════════════════════════
    TMDB
 ══════════════════════════════════════ */
-const TMDB_TOKEN = (typeof CONFIG !== 'undefined' && CONFIG.TMDB_TOKEN) ? CONFIG.TMDB_TOKEN : '';
+/* TMDB read-only token — safe to include (search only, no write access) */
+const TMDB_TOKEN = (typeof CONFIG !== 'undefined' && CONFIG.TMDB_TOKEN)
+  ? CONFIG.TMDB_TOKEN
+  : 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NzY4YmMyNGUyMzllYzk4MjA3YTRjOTBiNGE5YjlmYSIsIm5iZiI6MTc3NjExODY3My4wMjIsInN1YiI6IjY5ZGQ2YjkxYTAzN2E3N2YwNzAyN2ZiNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxUZezsehRWfIhWWRytm2GntFJUSLrjTf63AgOZ5t0c';
 const TMDB_IMG    = 'https://image.tmdb.org/t/p/w500';
 const TMDB_SEARCH = 'https://api.themoviedb.org/3/search/movie';
 
@@ -1734,28 +1737,44 @@ function showFormMsg(el, msg, isError) {
 
 /* Inject TMDB posters into quiz cards that have data-tmdb-title */
 async function hydrateQuizPosters() {
-  if (!TMDB_TOKEN) { console.warn('[TMDB] No token — quiz posters skipped.'); return; }
+  const QUIZ_POSTER_CACHE = 'fc_quiz_posters_v1';
+  let cache = {};
+  try { cache = JSON.parse(localStorage.getItem(QUIZ_POSTER_CACHE) || '{}'); } catch(e) {}
+
   const cards = document.querySelectorAll('.qfilm-card[data-tmdb-title]');
-  console.log('[TMDB] Fetching quiz posters for', cards.length, 'cards');
-  await Promise.all(Array.from(cards).map(async card => {
+
+  function injectPoster(card, posterPath) {
+    if (card.classList.contains('has-poster')) return;
+    const img = document.createElement('img');
+    img.className = 'qfilm-poster';
+    img.alt       = card.dataset.tmdbTitle + ' poster';
+    img.onload    = () => img.classList.add('loaded');
+    img.src       = `${TMDB_IMG}${posterPath}`;
+    card.insertBefore(img, card.firstChild);
+    card.classList.add('has-poster');
+  }
+
+  /* First pass: inject from cache (works without token) */
+  cards.forEach(card => {
+    const key = card.dataset.tmdbTitle;
+    if (cache[key]) injectPoster(card, cache[key]);
+  });
+
+  /* Second pass: fetch missing ones if token is available */
+  if (!TMDB_TOKEN) return;
+  const missing = Array.from(cards).filter(c => !cache[c.dataset.tmdbTitle]);
+  if (!missing.length) return;
+
+  await Promise.all(missing.map(async card => {
     const title  = card.dataset.tmdbTitle;
     const year   = card.dataset.tmdbYear || '';
     const result = await tmdbSearch(title, year);
-    if (!result || !result.poster) {
-      console.warn('[TMDB] No poster found for:', title);
-      return;
-    }
-    console.log('[TMDB] Poster found for:', title, result.poster);
-    /* Inject poster img as first child of the card */
-    const img = document.createElement('img');
-    img.className  = 'qfilm-poster';
-    img.alt        = title + ' poster';
-    img.loading    = 'lazy';
-    img.onload     = () => img.classList.add('loaded');
-    img.src        = `${TMDB_IMG}${result.poster}`;
-    card.insertBefore(img, card.firstChild);
-    card.classList.add('has-poster');
+    if (!result || !result.poster) return;
+    cache[title] = result.poster;
+    injectPoster(card, result.poster);
   }));
+
+  try { localStorage.setItem(QUIZ_POSTER_CACHE, JSON.stringify(cache)); } catch(e) {}
 }
 
 /* ══════════════════════════════════════
