@@ -1421,14 +1421,14 @@ document.getElementById('signupForm').addEventListener('submit', async function(
   btn.disabled = true;
   btn.textContent = 'SENDING…';
 
-  const f = AT_FIELDS.quiz;
+  const f = AT_FIELDS.mailingList;
   const fields = {
-    [f.name]:      name,
-    [f.email]:     email,
-    [f.submitted]: new Date().toISOString(),
+    [f.name]:       name,
+    [f.email]:      email,
+    [f.signedUpAt]: new Date().toISOString(),
   };
 
-  const result = await airtableSend(AT_TABLES.quiz, fields);
+  const result = await airtableSend(AT_TABLES.mailingList, fields);
 
   if (result.skipped || result.ok) {
     this.style.display = 'none';
@@ -1769,6 +1769,7 @@ const AT_TABLES = {
   quiz:        'tblkIFOCshkycyLoJ',  // Quiz Responses
   boardVotes:  'tbl0cItMJWnCb8YuF',  // Film Board Votes
   boardFilms:  'tblNTdslY26RUU5MO',  // Film Board Submissions
+  mailingList: 'tbl830j5bF3J9g855',  // Mailing List (Get on the List)
 };
 /* Field IDs — more reliable than names across API versions */
 const AT_FIELDS = {
@@ -1793,6 +1794,11 @@ const AT_FIELDS = {
     why:         'fld8XWE3YDY4nF8O0',
     email:       'fldWevKfZvbmWVoHM',
     submittedAt: 'fldMymjQ9snmGYB0b',
+  },
+  mailingList: {
+    name:       'fldSVLqUGSfnOxMXu',
+    email:      'fldqY8CdORhw1RHGv',
+    signedUpAt: 'fldTzGVeWaWhSJ7l4',
   },
 };
 
