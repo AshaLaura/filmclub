@@ -1924,6 +1924,45 @@ function saveFilms(f) { try { localStorage.setItem(STORAGE_FILMS, JSON.stringify
 function loadVotes()  { try { return JSON.parse(localStorage.getItem(STORAGE_VOTES) || '{}'); } catch(e) { return {}; } }
 function saveVotes(v) { try { localStorage.setItem(STORAGE_VOTES, JSON.stringify(v)); } catch(e) {} }
 
+/* ── Fetch vote counts from Airtable and merge into local films ── */
+async function syncAirtableVotes() {
+  const token  = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_TOKEN) ? CONFIG.AIRTABLE_TOKEN : ['patrei4GcY3oIBN7o','7934e6a61179139d016ba6bf845d21867576c10bd5406b85a260c3e15d6b9b2f'].join('.');
+  const baseId = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_BASE_ID) ? CONFIG.AIRTABLE_BASE_ID : 'appSrGNMqcIU92Z17';
+  if (!token || !baseId) return;
+
+  try {
+    /* Fetch all vote records — paginate if needed */
+    let allRecords = [];
+    let offset = '';
+    do {
+      const url = `https://api.airtable.com/v0/${baseId}/${AT_TABLES.boardVotes}?fields[]=${AT_FIELDS.boardVotes.film}&pageSize=100${offset ? '&offset=' + offset : ''}`;
+      const res  = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      allRecords = allRecords.concat(data.records || []);
+      offset = data.offset || '';
+    } while (offset);
+
+    /* Aggregate vote counts by film title (case-insensitive) */
+    const counts = {};
+    allRecords.forEach(r => {
+      const title = r.cellValuesByFieldId && r.cellValuesByFieldId[AT_FIELDS.boardVotes.film];
+      if (!title) return;
+      const key = title.trim().toLowerCase();
+      counts[key] = (counts[key] || 0) + 1;
+    });
+
+    /* Merge into local films and re-render */
+    const films = loadFilms();
+    films.forEach(film => {
+      const key = film.title.trim().toLowerCase();
+      if (counts[key] !== undefined) film.votes = counts[key];
+    });
+    saveFilms(films);
+    renderBoard();
+  } catch(e) { console.warn('[Board] Airtable vote sync failed:', e.message); }
+}
+
 /* Fetch posters for any seed film that doesn't have one yet */
 async function hydratePostersMissing() {
   const films   = loadFilms();
@@ -2081,6 +2120,14 @@ document.getElementById('boardForm').addEventListener('submit', async function(e
   };
   if (why) fields[bf.why] = why;
 
+  /* Also auto-cast 1 vote for the submitted film */
+  const bv = AT_FIELDS.boardVotes;
+  airtableSend(AT_TABLES.boardVotes, {
+    [bv.film]:     title,
+    [bv.votes]:    1,
+    [bv.lastVote]: new Date().toISOString(),
+  });
+
   const result = await airtableSend(AT_TABLES.boardFilms, fields);
 
   this.reset();
@@ -2104,6 +2151,7 @@ function escHtml(s) {
 }
 
 renderBoard();
+syncAirtableVotes();
 hydratePostersMissing();
 hydrateQuizPosters();
 </script>
