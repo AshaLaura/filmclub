@@ -1954,12 +1954,31 @@ async function syncAirtableVotes() {
 
     /* Merge into local films and re-render */
     const films = loadFilms();
+    const localKeySet = new Set(films.map(f => f.title.trim().toLowerCase()));
+
+    // Update vote counts for films that already exist locally
     films.forEach(film => {
       const key = film.title.trim().toLowerCase();
       if (counts[key] !== undefined) film.votes = counts[key];
     });
+
+    // Add films from Airtable that don't exist locally yet
+    Object.entries(counts).forEach(([key, count]) => {
+      if (!localKeySet.has(key)) {
+        const originalTitle = allRecords.find(r => {
+          const t = r.cellValuesByFieldId?.[AT_FIELDS.boardVotes.film];
+          return t && t.trim().toLowerCase() === key;
+        })?.cellValuesByFieldId?.[AT_FIELDS.boardVotes.film]?.trim();
+        if (originalTitle) {
+          const newId = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
+          films.push({ id: newId, title: originalTitle, why: '', votes: count, poster: null });
+        }
+      }
+    });
+
     saveFilms(films);
     renderBoard();
+    hydratePostersMissing(); // fetch posters for any newly-added Airtable-only films
   } catch(e) { console.warn('[Board] Airtable vote sync failed:', e.message); }
 }
 
