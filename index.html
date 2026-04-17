@@ -1945,7 +1945,7 @@ async function syncAirtableVotes() {
     let allRecords = [];
     let offset = '';
     do {
-      const url = `https://api.airtable.com/v0/${baseId}/${AT_TABLES.boardVotes}?fields[]=${AT_FIELDS.boardVotes.film}&pageSize=100${offset ? '&offset=' + offset : ''}`;
+      const url = `https://api.airtable.com/v0/${baseId}/${AT_TABLES.boardVotes}?fields[]=${AT_FIELDS.boardVotes.film}&returnFieldsByFieldId=true&pageSize=100${offset ? '&offset=' + offset : ''}`;
       const res  = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) return;
       const data = await res.json();
@@ -1956,7 +1956,7 @@ async function syncAirtableVotes() {
     /* Aggregate vote counts by film title (case-insensitive) */
     const counts = {};
     allRecords.forEach(r => {
-      const title = r.cellValuesByFieldId && r.cellValuesByFieldId[AT_FIELDS.boardVotes.film];
+      const title = r.fields && r.fields[AT_FIELDS.boardVotes.film];
       if (!title) return;
       const key = title.trim().toLowerCase();
       counts[key] = (counts[key] || 0) + 1;
@@ -1976,9 +1976,9 @@ async function syncAirtableVotes() {
     Object.entries(counts).forEach(([key, count]) => {
       if (!localKeySet.has(key)) {
         const originalTitle = allRecords.find(r => {
-          const t = r.cellValuesByFieldId?.[AT_FIELDS.boardVotes.film];
+          const t = r.fields?.[AT_FIELDS.boardVotes.film];
           return t && t.trim().toLowerCase() === key;
-        })?.cellValuesByFieldId?.[AT_FIELDS.boardVotes.film]?.trim();
+        })?.fields?.[AT_FIELDS.boardVotes.film]?.trim();
         if (originalTitle) {
           const newId = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
           films.push({ id: newId, title: originalTitle, why: '', votes: count, poster: null });
