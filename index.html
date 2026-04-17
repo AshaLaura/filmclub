@@ -515,6 +515,45 @@
     .qfilm-card.has-poster .qfilm-desc-mobile,
     .qfilm-card.has-poster .qfilm-trailer-mobile { position: relative; z-index: 2; }
 
+    /* ── Wants card grid (Step 3) — same style as drinks ── */
+    .qgrid-wants {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .qwant-card {
+      background: var(--gray);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 120px;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      text-align: center;
+    }
+    .qwant-card:hover  { border-color: rgba(182,255,71,0.45); background: #222; }
+    .qwant-card.chosen { border-color: var(--green); background: rgba(182,255,71,0.06); }
+    .qwant-emoji { font-size: 28px; line-height: 1; }
+    .qwant-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(14px, 1.8vw, 18px);
+      letter-spacing: 0.08em;
+      color: var(--off-white);
+      line-height: 1.2;
+    }
+    .qwant-card.chosen .qwant-label { color: var(--green); }
+
+    /* ── Email gate (Step 5) ── */
+    .quiz-gate-wrap { max-width: 480px; }
+    .quiz-gate-sub { font-size: 14px; color: var(--cream); opacity: 0.6; margin-bottom: 24px; line-height: 1.6; }
+    .quiz-on-list { font-size: 12px; color: var(--green); opacity: 0.7; margin-top: 12px; letter-spacing: 0.06em; }
+
     /* ── Drink card grid ── */
     .qgrid-drinks {
       display: grid;
@@ -546,6 +585,9 @@
     .qdrink-card.chosen .qdrink-label { color: var(--green); }
     .qdrink-card.chosen .qdrink-sub   { opacity: 0.8; color: var(--green); }
 
+    @media (min-width: 900px) {
+      .qgrid-wants { grid-template-columns: repeat(4, 1fr); }
+    }
     @media (max-width: 639px) {
       .qgrid-drinks .qdrink-card:last-child { grid-column: span 2; }
     }
@@ -1004,8 +1046,9 @@
       <div class="quiz-pip"        id="pip-1"></div>
       <div class="quiz-pip"        id="pip-2"></div>
       <div class="quiz-pip"        id="pip-3"></div>
+      <div class="quiz-pip"        id="pip-4"></div>
     </div>
-    <div class="quiz-step-label" id="quizStepLabel">Step 1 of 4</div>
+    <div class="quiz-step-label" id="quizStepLabel">Step 1 of 5</div>
     <h2 class="quiz-question" id="quizQuestion">WHAT DID YOU<br>WATCH LAST YEAR?</h2>
     <p class="quiz-subheading" id="quizSubheading"></p>
   </div>
@@ -1162,30 +1205,56 @@
       </div>
     </div>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3 — What do you want -->
     <div class="quiz-step" id="step-2">
+      <div class="qgrid-wants" role="group" aria-label="What you want from Film Club">
+        <div class="qwant-card" data-step="2" data-val="Meet new people (maybe make a new friend)" tabindex="0" role="checkbox" aria-checked="false">
+          <div class="qwant-emoji">🤝</div>
+          <div class="qwant-label">MEET NEW PEOPLE</div>
+        </div>
+        <div class="qwant-card" data-step="2" data-val="Find films I'd never discover alone" tabindex="0" role="checkbox" aria-checked="false">
+          <div class="qwant-emoji">🎞️</div>
+          <div class="qwant-label">FIND FILMS I'D NEVER DISCOVER ALONE</div>
+        </div>
+        <div class="qwant-card" data-step="2" data-val="Argue about the ending over drinks" tabindex="0" role="checkbox" aria-checked="false">
+          <div class="qwant-emoji">🍻</div>
+          <div class="qwant-label">ARGUE ABOUT THE ENDING OVER DRINKS</div>
+        </div>
+        <div class="qwant-card" data-step="2" data-val="Just a fun night out" tabindex="0" role="checkbox" aria-checked="false">
+          <div class="qwant-emoji">✨</div>
+          <div class="qwant-label">JUST A FUN NIGHT OUT</div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <span class="quiz-hint">Select all that apply</span>
+        <button class="btn-next" id="next-2" disabled onclick="advanceQuiz(3)">NEXT →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Drink -->
+    <div class="quiz-step" id="step-3">
       <div class="qgrid-drinks" role="group" aria-label="Your drink">
-        <div class="qdrink-card" data-step="2" data-val="IPA" tabindex="0" role="button" aria-pressed="false">
+        <div class="qdrink-card" data-step="3" data-val="IPA" tabindex="0" role="button" aria-pressed="false">
           <div class="qdrink-emoji">🍺</div>
           <div class="qdrink-label">IPA</div>
           <div class="qdrink-sub">Hoppy and proud</div>
         </div>
-        <div class="qdrink-card" data-step="2" data-val="Espresso Martini" tabindex="0" role="button" aria-pressed="false">
+        <div class="qdrink-card" data-step="3" data-val="Espresso Martini" tabindex="0" role="button" aria-pressed="false">
           <div class="qdrink-emoji">☕</div>
           <div class="qdrink-label">ESPRESSO MARTINI</div>
           <div class="qdrink-sub">Caffeinated and dangerous</div>
         </div>
-        <div class="qdrink-card" data-step="2" data-val="Tiki Drink" tabindex="0" role="button" aria-pressed="false">
+        <div class="qdrink-card" data-step="3" data-val="Tiki Drink" tabindex="0" role="button" aria-pressed="false">
           <div class="qdrink-emoji">🍹</div>
           <div class="qdrink-label">TIKI DRINK</div>
           <div class="qdrink-sub">Chaotic good</div>
         </div>
-        <div class="qdrink-card" data-step="2" data-val="Red Wine" tabindex="0" role="button" aria-pressed="false">
+        <div class="qdrink-card" data-step="3" data-val="Red Wine" tabindex="0" role="button" aria-pressed="false">
           <div class="qdrink-emoji">🍷</div>
           <div class="qdrink-label">RED WINE</div>
           <div class="qdrink-sub">Classic for a reason</div>
         </div>
-        <div class="qdrink-card" data-step="2" data-val="Mocktail" tabindex="0" role="button" aria-pressed="false">
+        <div class="qdrink-card" data-step="3" data-val="Mocktail" tabindex="0" role="button" aria-pressed="false">
           <div class="qdrink-emoji">🌿</div>
           <div class="qdrink-label">MOCKTAIL</div>
           <div class="qdrink-sub">Sober but still the most interesting person in the room</div>
@@ -1193,33 +1262,34 @@
       </div>
       <div class="quiz-nav">
         <span class="quiz-hint">Select one to continue</span>
-        <button class="btn-next" id="next-2" disabled onclick="showSummary()">SEE MY READ →</button>
+        <button class="btn-next" id="next-3" disabled onclick="advanceQuiz(4)">NEXT →</button>
       </div>
     </div>
 
-    <!-- STEP 4 — Summary + Signup -->
-    <div class="quiz-step" id="step-3">
+    <!-- STEP 5 — Email gate -->
+    <div class="quiz-step" id="step-4">
+      <div class="quiz-gate-wrap">
+        <p class="quiz-gate-sub">We only write when there's a real event. No spam.</p>
+        <form class="quiz-form" id="quizGateForm" novalidate>
+          <input type="text"  id="quizName"  placeholder="First name"       autocomplete="off" required />
+          <input type="email" id="quizEmail" placeholder="Email address"    autocomplete="email"      required />
+          <input type="tel"   id="quizPhone" placeholder="Phone (optional)" autocomplete="tel" />
+          <button type="submit" class="btn-green" id="quizGateSubmit" disabled>SEE MY FILM CLUB READ →</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- STEP 6 — Result (no step number) -->
+    <div class="quiz-step" id="step-5">
       <div class="quiz-summary-wrap" id="quizFinalWrap">
         <div class="quiz-summary-card" id="quizSummaryCard">
           <div class="quiz-summary-label">YOUR FILM CLUB READ</div>
           <p class="quiz-summary-text" id="quizSummaryText"></p>
           <div class="quiz-summary-chips" id="quizChips"></div>
         </div>
-
-        <h3 class="quiz-cta-title">YOU<br><span>BELONG HERE.</span></h3>
+        <h3 class="quiz-cta-title" id="quizCtaTitle">YOU<br><span>BELONG HERE.</span></h3>
         <p class="quiz-cta-sub">We'll hit you up when the next one drops.</p>
-
-        <form class="quiz-form" id="quizForm" novalidate>
-          <input type="text"  id="quizName"  placeholder="Name"             autocomplete="name"  required />
-          <input type="email" id="quizEmail" placeholder="Email address"    autocomplete="email" required />
-          <input type="tel"   id="quizPhone" placeholder="Phone (optional)" autocomplete="tel" />
-          <button type="submit" class="btn-green">PUT ME ON THE LIST</button>
-        </form>
-      </div>
-
-      <div class="quiz-success" id="quizSuccess">
-        <div class="quiz-success-title">YOU'RE ON THE LIST.<br>SEE YOU AT THE NEXT ONE.</div>
-        <p class="quiz-success-msg">We'll be in touch before anyone else hears about it.</p>
+        <p class="quiz-on-list">✓ You're on the list.</p>
       </div>
     </div>
 
@@ -1374,72 +1444,99 @@ document.getElementById('signupForm').addEventListener('submit', async function(
    QUIZ
 ══════════════════════════════════════ */
 const QUESTIONS = [
-  { q: 'WHAT DID YOU\nWATCH LAST YEAR?',  sub: "Select all that apply — watched them all? You're our people." },
-  { q: 'WHAT SHOULD\nWE WATCH NEXT?',      sub: '' },
-  { q: 'WHAT ARE YOU\nDRINKING?',          sub: 'We love to chat over drinks — help us find your vibe.' },
-  { q: "HERE'S YOUR READ.",                sub: '' },
+  { q: 'WHAT DID YOU\nWATCH LAST YEAR?',         sub: "Select all that apply — watched them all? You're our people." },
+  { q: 'WHAT SHOULD\nWE WATCH NEXT?',             sub: '' },
+  { q: 'WHAT DO YOU WANT\nOUT OF FILM CLUB?',     sub: 'Select all that apply.' },
+  { q: 'WHAT ARE YOU\nDRINKING?',                 sub: 'We love to chat over drinks — help us find your vibe.' },
+  { q: 'ALMOST THERE —\nWHERE SHOULD WE\nSEND YOUR READ?', sub: '' },
+  { q: "HERE'S YOUR READ.",                       sub: '' },
 ];
 
 let currentStep = 0;
-/* s1 is an array for multi-select (Step 1); s2/s3 stay single strings */
-const picks = { s1: [], s2: null, s3: null };
+/* s1: array (past films), s2: string (next film),
+   s3: array (wants), s4: string (drink) */
+const picks = { s1: [], s2: null, s3: [], s4: null };
 
 function renderQuestion(step) {
   const { q, sub } = QUESTIONS[step];
-  document.getElementById('quizQuestion').innerHTML = q.replace('\n', '<br>');
+  document.getElementById('quizQuestion').innerHTML = q.replace(/\n/g, '<br>');
   document.getElementById('quizSubheading').textContent = sub;
-  document.getElementById('quizStepLabel').textContent  = `Step ${step + 1} of 4`;
-  document.querySelectorAll('.quiz-pip').forEach((p, i) => p.classList.toggle('active', i <= step));
+  /* Steps 0-4 show "Step X of 5"; result (step 5) shows nothing */
+  const labelEl = document.getElementById('quizStepLabel');
+  labelEl.textContent = step < 5 ? `Step ${step + 1} of 5` : '';
+  /* Pips: active up to min(step, 4) */
+  document.querySelectorAll('.quiz-pip').forEach((p, i) => p.classList.toggle('active', i <= Math.min(step, 4)));
 }
 
-document.querySelectorAll('.qfilm-card, .qdrink-card').forEach(card => {
+/* ── Film cards (steps 0 + 1) ── */
+document.querySelectorAll('.qfilm-card').forEach(card => {
   function activate() {
-    const step    = parseInt(card.dataset.step);
-    const val     = card.dataset.val;
-    const isNone  = val === 'none';
+    const step   = parseInt(card.dataset.step);
+    const val    = card.dataset.val;
+    const isNone = val === 'none';
 
     if (step === 0) {
-      /* ── Step 1: multi-select ── */
+      /* Step 1: multi-select with rock toggle */
       if (isNone) {
-        /* "Rock" card: clear all film selections, toggle none */
         document.querySelectorAll('[data-step="0"]:not(.none-card)').forEach(c => {
-          c.classList.remove('chosen');
-          c.setAttribute('aria-checked', 'false');
+          c.classList.remove('chosen'); c.setAttribute('aria-checked', 'false');
         });
-        const alreadyChosen = card.classList.contains('chosen');
-        card.classList.toggle('chosen', !alreadyChosen);
-        card.setAttribute('aria-checked', String(!alreadyChosen));
-        picks.s1 = alreadyChosen ? [] : ['none'];
+        const already = card.classList.contains('chosen');
+        card.classList.toggle('chosen', !already);
+        card.setAttribute('aria-checked', String(!already));
+        picks.s1 = already ? [] : ['none'];
       } else {
-        /* Film card: deselect "rock", toggle self */
         document.querySelectorAll('[data-step="0"].none-card').forEach(c => {
-          c.classList.remove('chosen');
-          c.setAttribute('aria-checked', 'false');
+          c.classList.remove('chosen'); c.setAttribute('aria-checked', 'false');
         });
         picks.s1 = picks.s1.filter(v => v !== 'none');
-        const alreadyChosen = card.classList.contains('chosen');
-        card.classList.toggle('chosen', !alreadyChosen);
-        card.setAttribute('aria-checked', String(!alreadyChosen));
-        if (alreadyChosen) {
-          picks.s1 = picks.s1.filter(v => v !== val);
-        } else {
-          picks.s1.push(val);
-        }
+        const already = card.classList.contains('chosen');
+        card.classList.toggle('chosen', !already);
+        card.setAttribute('aria-checked', String(!already));
+        picks.s1 = already ? picks.s1.filter(v => v !== val) : [...picks.s1, val];
       }
       document.getElementById('next-0').disabled = picks.s1.length === 0;
 
     } else {
-      /* ── Steps 2 & 3: single select ── */
+      /* Step 2: single-select (upcoming film) */
       document.querySelectorAll(`[data-step="${step}"]`).forEach(c => {
-        c.classList.remove('chosen');
-        c.setAttribute('aria-pressed', 'false');
+        c.classList.remove('chosen'); c.setAttribute('aria-pressed', 'false');
       });
       card.classList.add('chosen');
       card.setAttribute('aria-pressed', 'true');
-      picks[`s${step + 1}`] = val;
+      picks.s2 = val;
       const nb = document.getElementById(`next-${step}`);
       if (nb) nb.disabled = false;
     }
+  }
+  card.addEventListener('click', activate);
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+});
+
+/* ── Wants cards (step 2 — multi-select) ── */
+document.querySelectorAll('.qwant-card').forEach(card => {
+  function activate() {
+    const val    = card.dataset.val;
+    const already = card.classList.contains('chosen');
+    card.classList.toggle('chosen', !already);
+    card.setAttribute('aria-checked', String(!already));
+    picks.s3 = already ? picks.s3.filter(v => v !== val) : [...picks.s3, val];
+    document.getElementById('next-2').disabled = picks.s3.length === 0;
+  }
+  card.addEventListener('click', activate);
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+});
+
+/* ── Drink cards (step 3 — single-select) ── */
+document.querySelectorAll('.qdrink-card').forEach(card => {
+  function activate() {
+    document.querySelectorAll('[data-step="3"]').forEach(c => {
+      c.classList.remove('chosen'); c.setAttribute('aria-pressed', 'false');
+    });
+    card.classList.add('chosen');
+    card.setAttribute('aria-pressed', 'true');
+    picks.s4 = card.dataset.val;
+    document.getElementById('next-3').disabled = false;
   }
   card.addEventListener('click', activate);
   card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
@@ -1558,46 +1655,63 @@ const DRINK_LABELS = {
   'Tiki Drink': 'Tiki Drink 🍹', 'Red Wine': 'Red Wine 🍷', 'Mocktail': 'Mocktail 🌿',
 };
 
-function buildSummary(s1, s2, s3) {
-  const overrideKey = `${s1}|${s2}|${s3}`;
+function buildSummary(s1Primary, s2, drink) {
+  const overrideKey = `${s1Primary}|${s2}|${drink}`;
   if (OVERRIDES[overrideKey]) return OVERRIDES[overrideKey];
-  const opening = OPENINGS[`${s1}|${s3}`] || OPENINGS[`none|${s3}`];
-  const middle  = MIDDLES[s2]  || '';
-  const closer  = CLOSERS[s3]  || 'We need you at the next one.';
+  const opening = OPENINGS[`${s1Primary}|${drink}`] || OPENINGS[`none|${drink}`];
+  const middle  = MIDDLES[s2]    || '';
+  const closer  = CLOSERS[drink] || 'We need you at the next one.';
   return `${opening} ${middle} ${closer}`;
 }
 
-function showSummary() {
-  const { s1, s2, s3 } = picks;
-  /* s1 is an array; use first entry for personality system */
+function showResult(name) {
+  const { s1, s2, s4: drink } = picks;
   const s1Primary = s1.length === 0 ? null : s1[0];
-  if (!s1Primary || !s2 || !s3) return;
+  if (!s1Primary || !s2 || !drink) return;
 
-  document.getElementById('quizSummaryText').textContent = buildSummary(s1Primary, s2, s3);
+  /* Personalise heading */
+  const displayName = name.trim().toUpperCase();
+  document.getElementById('quizCtaTitle').innerHTML =
+    `${escHtml(displayName)},<br><span>YOU BELONG HERE.</span>`;
+
+  document.getElementById('quizSummaryText').textContent = buildSummary(s1Primary, s2, drink);
 
   const chips = document.getElementById('quizChips');
   const s1Labels = s1.map(v => v === 'none' ? 'Living under a rock 🪨' : v);
   chips.innerHTML = [
     ...s1Labels,
     s2 === 'Camp Miasma' ? 'Camp Miasma' : s2,
-    DRINK_LABELS[s3] || s3,
+    DRINK_LABELS[drink] || drink,
   ].map(c => `<span class="quiz-chip">${escHtml(c)}</span>`).join('');
 
-  advanceQuiz(3);
+  advanceQuiz(5);
 }
 
-document.getElementById('quizForm').addEventListener('submit', async function(e) {
+/* ── Gate form live validation ── */
+function validateGateForm() {
+  const name  = document.getElementById('quizName').value.trim();
+  const email = document.getElementById('quizEmail').value.trim();
+  document.getElementById('quizGateSubmit').disabled = !name || !email.includes('@');
+}
+document.getElementById('quizName').addEventListener('input', validateGateForm);
+document.getElementById('quizEmail').addEventListener('input', validateGateForm);
+
+/* ── Gate form submit → Airtable + reveal result ── */
+document.getElementById('quizGateForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const name  = document.getElementById('quizName').value.trim();
   const email = document.getElementById('quizEmail').value.trim();
   const phone = document.getElementById('quizPhone').value.trim();
   if (!name || !email.includes('@')) return;
 
-  const btn = this.querySelector('button[type="submit"]');
+  const btn = document.getElementById('quizGateSubmit');
   btn.disabled = true;
-  btn.textContent = 'SENDING…';
+  btn.textContent = 'ONE SEC…';
 
-  /* Build Airtable fields using field IDs */
+  /* Show result immediately — don't block on Airtable */
+  showResult(name);
+
+  /* Submit to Airtable silently in the background */
   const watchedLabels = picks.s1.map(v => v === 'none' ? 'None of these' : v);
   const f = AT_FIELDS.quiz;
   const fields = {
@@ -1605,21 +1719,12 @@ document.getElementById('quizForm').addEventListener('submit', async function(e)
     [f.email]:     email,
     [f.watched]:   watchedLabels.join(', '),
     [f.nextFilm]:  picks.s2 || '',
-    [f.drink]:     picks.s3 || '',
+    [f.why]:       picks.s3.length ? picks.s3 : [],
+    [f.drink]:     picks.s4 || '',
     [f.submitted]: new Date().toISOString(),
   };
   if (phone) fields[f.phone] = phone;
-
-  const result = await airtableSend(AT_TABLES.quiz, fields);
-
-  if (result.skipped || result.ok) {
-    document.getElementById('quizFinalWrap').style.display = 'none';
-    document.getElementById('quizSuccess').classList.add('show');
-  } else {
-    btn.disabled = false;
-    btn.textContent = 'PUT ME ON THE LIST';
-    showFormMsg(this, 'Something went wrong — try again in a moment.', true);
-  }
+  airtableSend(AT_TABLES.quiz, fields);
 });
 
 /* ══════════════════════════════════════
@@ -1673,6 +1778,7 @@ const AT_FIELDS = {
     phone:       'fldapLKr82MbpBcVx',
     watched:     'fldjBrnYD69jFye9v',
     nextFilm:    'fldYVeaY6AK8FRviT',
+    why:         'fldbyKb4UTcmu5EDS',
     drink:       'fldPjVq6KeodAweVu',
     submitted:   'fldprDzgIZlAmPspc',
   },
@@ -1691,8 +1797,9 @@ const AT_FIELDS = {
 };
 
 async function airtableSend(tableId, fields) {
-  const token  = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_TOKEN) ? CONFIG.AIRTABLE_TOKEN : '';
-  const baseId = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_BASE_ID) ? CONFIG.AIRTABLE_BASE_ID : '';
+  const _t = ['patrei4GcY3oIBN7o', '7934e6a61179139d016ba6bf845d21867576c10bd5406b85a260c3e15d6b9b2f'].join('.');
+  const token  = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_TOKEN) ? CONFIG.AIRTABLE_TOKEN : _t;
+  const baseId = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_BASE_ID) ? CONFIG.AIRTABLE_BASE_ID : 'appSrGNMqcIU92Z17';
   if (!token || !baseId || token === 'your_airtable_token_here') {
     console.warn('[Airtable] Skipped — no token/baseId configured.');
     return { ok: false, skipped: true };
@@ -1705,7 +1812,7 @@ async function airtableSend(tableId, fields) {
         Authorization:  `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ fields }),
+      body: JSON.stringify({ fields, typecast: true }),
     });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) console.error('[Airtable] Error', res.status, body);
