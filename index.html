@@ -686,21 +686,16 @@
     .btn-next:hover    { background: var(--green); color: var(--black); }
     .btn-next:disabled { opacity: 0.28; pointer-events: none; }
 
-    /* ─── Past Events ─── */
+    /* ─── Past Screenings Filmstrip ─── */
     #events {
-      padding: 100px 20px;
+      padding: 100px 0;
       border-bottom: 1px solid var(--border);
     }
-
-    .events-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 48px;
-      flex-wrap: wrap;
-      gap: 16px;
+    .events-head {
+      max-width: 1100px;
+      margin: 0 auto 48px;
+      padding: 0 20px;
     }
-
     .events-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(44px, 7vw, 92px);
@@ -708,38 +703,92 @@
     }
     .events-title .accent { color: var(--purple-mid); }
 
-    .events-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .filmstrip-wrap { overflow: hidden; }
+    .filmstrip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 4px max(20px, calc((100vw - 1100px) / 2 + 20px)) 36px;
+    }
+    .filmstrip::-webkit-scrollbar { display: none; }
 
-    .event-card {
+    .strip-card {
+      flex: 0 0 190px;
+      scroll-snap-align: start;
       background: var(--gray);
-      padding: 40px 32px;
-      position: relative;
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
-      transition: background 0.25s;
+      transition: background 0.2s;
     }
-    .event-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-    .event-card:first-child::before { background: var(--green); }
-    .event-card:last-child::before  { background: var(--purple-mid); }
-    .event-card:hover { background: var(--gray2); }
-
-    .event-card-bg {
-      position: absolute; bottom: -20px; right: -10px;
-      font-family: 'Bebas Neue', sans-serif; font-size: 140px; line-height: 1;
-      color: transparent; pointer-events: none; user-select: none;
+    .strip-card:hover { background: var(--gray2); }
+    .strip-card::before {
+      content: '';
+      display: block;
+      height: 3px;
+      flex-shrink: 0;
     }
-    .event-card:first-child .event-card-bg { -webkit-text-stroke: 1px rgba(182,255,71,0.07); }
-    .event-card:last-child  .event-card-bg { -webkit-text-stroke: 1px rgba(122,31,173,0.15); }
+    .strip-card:nth-child(odd)::before  { background: var(--green); }
+    .strip-card:nth-child(even)::before { background: var(--purple-mid); }
 
-    .event-date  { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
-    .event-card:last-child .event-date { color: var(--purple-mid); }
-    .event-film  { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4vw, 54px); line-height: 0.95; margin-bottom: 12px; }
-    .event-desc  { font-size: 13px; color: var(--cream); opacity: 0.65; line-height: 1.6; }
-
-    .event-venue-block { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
-    .event-venue-item  { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--cream); opacity: 0.8; }
-    .event-venue-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-    .event-card:last-child .event-venue-item .dot { background: var(--purple-mid); }
-    .event-venue-item strong { color: var(--off-white); font-weight: 600; }
+    .strip-poster {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display: block;
+      background: #111;
+    }
+    .strip-poster-placeholder {
+      width: 100%;
+      aspect-ratio: 2/3;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .strip-poster-placeholder-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      color: var(--green);
+      opacity: 0.3;
+      text-align: center;
+      padding: 12px;
+      line-height: 1.2;
+    }
+    .strip-info {
+      padding: 14px 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+    .strip-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 17px;
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+      color: var(--off-white);
+    }
+    .strip-venue {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--cream);
+      opacity: 0.6;
+    }
+    .strip-after {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--green);
+      margin-top: 3px;
+    }
 
     /* ════════════════════════════════
        FILM BOARD
@@ -894,6 +943,21 @@
     .btn-vote.voted { border-color: var(--green); color: var(--green); background: rgba(182,255,71,0.08); }
     .btn-vote-count { font-family: 'Bebas Neue', sans-serif; font-size: 20px; }
 
+    .board-card-trailer {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      align-self: flex-start;
+    }
+    .board-card-trailer:hover { opacity: 1; }
+
     /* ─── Footer ─── */
     footer {
       border-top: 1px solid var(--border);
@@ -949,9 +1013,10 @@
       .quiz-step   { padding: 0 16px; }
       .quiz-summary-card { padding: 24px 20px; }
 
-      #events { padding: 64px 16px; }
-      .events-grid { grid-template-columns: 1fr; }
-      .event-card  { padding: 32px 24px; }
+      #events { padding: 64px 0; }
+      .events-head { padding: 0 16px; margin-bottom: 32px; }
+      .filmstrip { padding: 4px 16px 24px; }
+      .strip-card { flex: 0 0 155px; }
 
       #board { padding: 64px 16px; }
       .board-grid { grid-template-columns: 1fr; }
@@ -1297,35 +1362,16 @@
 </section>
 
 <!-- ══════════════════════════════════════
-     PAST EVENTS
+     PAST SCREENINGS
 ══════════════════════════════════════ -->
 <section id="events">
-  <div class="container">
-    <div class="events-header">
-      <h2 class="events-title">PAST<br><span class="accent">EVENTS</span></h2>
-      <div class="tag">The archive</div>
-    </div>
-    <div class="events-grid">
-      <div class="event-card">
-        <div class="event-card-bg" aria-hidden="true">01</div>
-        <div class="event-date">Past Event / Vol. 01</div>
-        <h3 class="event-film"><em>Love Lies Bleeding</em></h3>
-        <p class="event-desc">Rose Glass's neo-noir fever dream. Kristen Stewart. Katy O'Brian. A film that punches you in the chest and dares you to look away.</p>
-        <div class="event-venue-block">
-          <div class="event-venue-item"><div class="dot"></div><span><strong>Piedmont Theatre</strong> — Screening</span></div>
-          <div class="event-venue-item"><div class="dot"></div><span><strong>Kona Club</strong> — Drinks after</span></div>
-        </div>
-      </div>
-      <div class="event-card">
-        <div class="event-card-bg" aria-hidden="true">02</div>
-        <div class="event-date">Past Event / Vol. 02</div>
-        <h3 class="event-film"><em>Anora</em></h3>
-        <p class="event-desc">Sean Baker's Palme d'Or winner. Messy, alive, and completely unforgettable. The room was still buzzing two rounds later.</p>
-        <div class="event-venue-block">
-          <div class="event-venue-item"><div class="dot"></div><span><strong>The New Parkway</strong> — Screening</span></div>
-          <div class="event-venue-item"><div class="dot"></div><span><strong>Beers at the bar</strong> — Right after the credits</span></div>
-        </div>
-      </div>
+  <div class="events-head">
+    <div class="tag">Some of our past screenings</div>
+    <h2 class="events-title">WHAT WE'VE<br><span class="accent">WATCHED</span></h2>
+  </div>
+  <div class="filmstrip-wrap">
+    <div class="filmstrip" id="filmstrip">
+      <!-- populated by renderFilmstrip() -->
     </div>
   </div>
 </section>
@@ -1756,10 +1802,20 @@ async function tmdbSearch(title, year) {
       hit = data2 && data2.results && data2.results[0];
     }
     if (!hit) return null;
+    /* Fetch YouTube trailer from TMDB videos endpoint */
+    let trailerUrl = null;
+    try {
+      const vRes  = await fetch(`https://api.themoviedb.org/3/movie/${hit.id}/videos?language=en-US`,
+        { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } });
+      const vData = vRes.ok ? await vRes.json() : null;
+      const clip  = vData?.results?.find(v => v.site === 'YouTube' && v.type === 'Trailer');
+      if (clip) trailerUrl = `https://www.youtube.com/watch?v=${clip.key}`;
+    } catch(e) { /* trailer fetch failing is non-fatal */ }
     return {
-      poster: hit.poster_path  || null,
-      title:  hit.title        || title,
-      year:   hit.release_date ? hit.release_date.slice(0, 4) : '',
+      poster:  hit.poster_path  || null,
+      title:   hit.title        || title,
+      year:    hit.release_date ? hit.release_date.slice(0, 4) : '',
+      trailer: trailerUrl,
     };
   } catch(e) { return null; }
 }
@@ -1897,28 +1953,28 @@ async function hydrateQuizPosters() {
 /* ══════════════════════════════════════
    FILM BOARD
 ══════════════════════════════════════ */
-const STORAGE_FILMS = 'fc_films_v5';
+const STORAGE_FILMS = 'fc_films_v6';
 const STORAGE_VOTES = 'fc_votes_v5';
 
 const SEED = [
   { id: 1, title: 'I Saw the TV Glow',
     why: "Jane Schoenbrun's trans horror poem about a TV show that might be real. Deeply unsettling and achingly beautiful",
-    votes: 0, poster: null },
+    votes: 0, poster: null, trailer: null },
   { id: 2, title: 'Past Lives',
     why: 'Twenty years, two continents, and one question that never gets answered. The most devastating romance in years',
-    votes: 0, poster: null },
+    votes: 0, poster: null, trailer: null },
   { id: 3, title: 'All of Us Strangers',
     why: 'A lonely screenwriter visits his childhood home and finds his dead parents still living there. Andrew Scott is devastating',
-    votes: 0, poster: null },
+    votes: 0, poster: null, trailer: null },
   { id: 4, title: 'Beau Is Afraid',
     why: "Ari Aster's three-hour anxiety spiral about a man trying to visit his mother. Completely unhinged. We love it",
-    votes: 0, poster: null },
+    votes: 0, poster: null, trailer: null },
   { id: 5, title: 'The Substance',
     why: 'Demi Moore injects herself with a drug that creates a younger, better version of herself. Body horror at its most visceral',
-    votes: 0, poster: null },
+    votes: 0, poster: null, trailer: null },
   { id: 6, title: 'Anora',
     why: "Sean Baker's Palme d'Or winner. A Brooklyn sex worker marries a Russian oligarch's son — chaos follows",
-    votes: 0, poster: null },
+    votes: 0, poster: null, trailer: null },
 ];
 
 function loadFilms() {
@@ -1988,19 +2044,22 @@ async function syncAirtableVotes() {
 
     saveFilms(films);
     renderBoard();
-    hydratePostersMissing(); // fetch posters for any newly-added Airtable-only films
+    hydrateFilmData(); // fetch posters + trailers for any newly-added Airtable-only films
   } catch(e) { console.warn('[Board] Airtable vote sync failed:', e.message); }
 }
 
-/* Fetch posters for any seed film that doesn't have one yet */
-async function hydratePostersMissing() {
+/* Fetch posters + trailers for any film that doesn't have them yet */
+async function hydrateFilmData() {
   const films   = loadFilms();
-  const missing = films.filter(f => !f.poster);
+  const missing = films.filter(f => !f.poster || f.trailer === null);
   if (!missing.length) return;
 
   await Promise.all(missing.map(async film => {
     const result = await tmdbSearch(film.title);
-    if (result && result.poster) film.poster = result.poster;
+    if (result) {
+      if (result.poster)  film.poster  = result.poster;
+      if (result.trailer) film.trailer = result.trailer;
+    }
   }));
 
   saveFilms(films);
@@ -2044,6 +2103,7 @@ function renderBoard() {
       <div class="board-card-body">
         <div class="board-card-title">${escHtml(film.title)}</div>
         ${film.why ? `<div class="board-card-why">"${escHtml(film.why)}"</div>` : ''}
+        ${film.trailer ? `<a class="board-card-trailer" href="${escHtml(film.trailer)}" target="_blank" rel="noopener">Watch Trailer ▶</a>` : ''}
         <button class="btn-vote${votes[film.id] ? ' voted' : ''}"
                 onclick="castVote(${film.id})"
                 aria-label="Vote for ${escHtml(film.title)}">
@@ -2138,7 +2198,7 @@ document.getElementById('boardForm').addEventListener('submit', async function(e
   /* Add to local board immediately */
   const films = loadFilms();
   const newId = films.reduce((m, f) => Math.max(m, f.id), 0) + 1;
-  films.push({ id: newId, title, why, votes: 0, poster });
+  films.push({ id: newId, title, why, votes: 0, poster, trailer: null });
   saveFilms(films);
 
   /* Send to Airtable Film Board Submissions */
@@ -2179,10 +2239,56 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+/* ─── Past Screenings Filmstrip ─── */
+const SCREENINGS = [
+  { title: 'Fremont',               venue: 'New Parkway',         after: 'Beeryland'       },
+  { title: 'A Haunting in Venice',  venue: 'New Parkway',         after: 'Double Standard' },
+  { title: 'American Fiction',      venue: 'Grand Lake Theatre',  after: 'Cat House'       },
+  { title: 'Problemista',           venue: 'Alamo Drafthouse SF', after: null               },
+  { title: 'Love Lies Bleeding',    venue: 'Piedmont Theatre',    after: 'Kona Club'       },
+  { title: 'I Saw the TV Glow',     venue: 'Piedmont Theatre',    after: null               },
+  { title: 'Anora',                 venue: 'New Parkway',         after: null               },
+];
+const STRIP_CACHE = 'fc_strip_v1';
+
+function renderFilmstrip() {
+  const cache = (() => { try { return JSON.parse(localStorage.getItem(STRIP_CACHE) || '{}'); } catch(e) { return {}; } })();
+  const el = document.getElementById('filmstrip');
+  if (!el) return;
+  el.innerHTML = SCREENINGS.map(s => {
+    const p = cache[s.title];
+    const imgHtml = p
+      ? `<img class="strip-poster" src="${TMDB_IMG}${escHtml(p)}" alt="${escHtml(s.title)} poster" loading="lazy" />`
+      : `<div class="strip-poster-placeholder"><div class="strip-poster-placeholder-text">${escHtml(s.title)}</div></div>`;
+    return `<div class="strip-card">
+        ${imgHtml}
+        <div class="strip-info">
+          <div class="strip-title">${escHtml(s.title)}</div>
+          <div class="strip-venue">${escHtml(s.venue)}</div>
+          ${s.after ? `<div class="strip-after">After → ${escHtml(s.after)}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function hydrateStripPosters() {
+  const cache = (() => { try { return JSON.parse(localStorage.getItem(STRIP_CACHE) || '{}'); } catch(e) { return {}; } })();
+  const missing = SCREENINGS.filter(s => !cache[s.title]);
+  if (!missing.length) return;
+  await Promise.all(missing.map(async s => {
+    const result = await tmdbSearch(s.title);
+    if (result && result.poster) cache[s.title] = result.poster;
+  }));
+  try { localStorage.setItem(STRIP_CACHE, JSON.stringify(cache)); } catch(e) {}
+  renderFilmstrip();
+}
+
 renderBoard();
 syncAirtableVotes();
-hydratePostersMissing();
+hydrateFilmData();
 hydrateQuizPosters();
+renderFilmstrip();
+hydrateStripPosters();
 </script>
 </body>
 </html>
