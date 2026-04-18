@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Film Club Oakland</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:      #0c0c0c;
+      --off-white:  #e8e2d0;
+      --cream:      #d4cbb8;
+      --green:      #b6ff47;
+      --purple:     #5a0e82;
+      --purple-mid: #7a1fad;
+      --gray:       #1e1e1e;
+      --gray2:      #252525;
+      --border:     #2e2e2e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--off-white);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── Shared ─── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 4px 12px;
+      margin-bottom: 24px;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      background: #111;
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 14px 18px;
+      min-height: 48px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      border-radius: 0;
+      width: 100%;
+    }
+    input::placeholder { color: rgba(212,203,184,0.22); }
+    input:focus { border-color: var(--green); background: #151515; }
+
+    .btn-green {
+      background: var(--green);
+      color: var(--black);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.14em;
+      border: none;
+      padding: 0 28px;
+      min-height: 52px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-green:hover  { background: #cbff6e; }
+    .btn-green:active { transform: scale(0.99); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.14em;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0 28px;
+      min-height: 52px;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-outline:hover { background: rgba(182,255,71,0.1); }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      height: 60px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(12,12,12,0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--off-white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--green); }
+
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--green); }
+
+    /* ─── Hero ─── */
+    #hero {
+      min-height: 52vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-top: 60px;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-bg-text {
+      position: absolute;
+      top: 50%; left: -3%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(120px, 20vw, 300px);
+      line-height: 0.85;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(232,226,208,0.05);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-inner {
+      padding: 48px 20px 64px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 14vw, 200px);
+      line-height: 0.88;
+    }
+    .hero-title .line-green  { color: var(--green); }
+    .hero-title .line-purple { color: transparent; -webkit-text-stroke: 2px var(--purple-mid); }
+
+    .hero-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--green), var(--purple-mid) 60%, transparent);
+      margin: 28px 0 0;
+    }
+
+    /* ─── Story section ─── */
+    #story {
+      padding: 48px 20px 100px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 80px;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .story-label {
+      position: sticky;
+      top: 80px;
+    }
+
+    .story-label-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 6vw, 80px);
+      line-height: 0.9;
+      margin-bottom: 20px;
+    }
+    .story-label-title .accent  { color: var(--green); }
+    .story-label-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--off-white); }
+
+    .story-label-sub {
+      font-size: 13px;
+      color: var(--cream);
+      opacity: 0.5;
+      line-height: 1.6;
+      letter-spacing: 0.04em;
+    }
+
+    .story-body p {
+      font-size: 17px;
+      color: var(--cream);
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+    .story-body p:last-child { margin-bottom: 0; }
+    .story-body strong { color: var(--off-white); font-weight: 700; }
+
+    /* ─── CTA section ─── */
+    #cta {
+      padding: 100px 20px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--purple-mid) 60%, transparent);
+    }
+
+    .cta-inner {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 80px;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .cta-left-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 8vw, 110px);
+      line-height: 0.88;
+      margin-bottom: 24px;
+    }
+    .cta-left-title .accent  { color: var(--green); }
+    .cta-left-title .outline { color: transparent; -webkit-text-stroke: 2px var(--off-white); }
+
+    .cta-left-sub {
+      font-size: 16px;
+      color: var(--cream);
+      opacity: 0.6;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .cta-quiz-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.14em;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0 28px;
+      min-height: 52px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .cta-quiz-btn:hover { background: rgba(182,255,71,0.1); }
+
+    .cta-form-wrap {
+      background: var(--gray);
+      padding: 40px 36px;
+      position: relative;
+    }
+    .cta-form-wrap::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--green);
+    }
+
+    .cta-form-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .cta-form-sub   { font-size: 12px; color: var(--cream); opacity: 0.55; line-height: 1.5; margin-bottom: 24px; }
+    .cta-form       { display: flex; flex-direction: column; gap: 10px; }
+    .cta-form-note  { font-size: 10px; color: var(--cream); opacity: 0.3; letter-spacing: 0.06em; line-height: 1.5; }
+
+    .cta-success { display: none; text-align: center; padding: 20px 0; }
+    .cta-success.show { display: block; }
+    .cta-success-icon  { font-size: 40px; color: var(--green); margin-bottom: 10px; }
+    .cta-success-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--green); letter-spacing: 0.1em; margin-bottom: 6px; }
+    .cta-success-msg   { font-size: 13px; color: var(--cream); opacity: 0.6; line-height: 1.6; }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.12em; opacity: 0.4; }
+    .footer-logo span { color: var(--green); opacity: 1; }
+    .footer-copy { font-size: 11px; color: var(--cream); opacity: 0.25; letter-spacing: 0.1em; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1023px) {
+      .story-grid { grid-template-columns: 1fr; gap: 48px; }
+      .story-label { position: static; }
+      .cta-inner { grid-template-columns: 1fr; gap: 48px; }
+    }
+
+    @media (max-width: 639px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+
+      #hero { min-height: 44vh; }
+      .hero-inner { padding: 32px 16px 48px; }
+
+      #story { padding: 64px 16px; }
+      #timeline { padding: 64px 16px; }
+      #cta { padding: 64px 16px; }
+      .cta-form-wrap { padding: 32px 20px; }
+
+      .timeline-row { grid-template-columns: 100px 1fr; gap: 16px; }
+
+      footer { flex-direction: column; text-align: center; padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="index.html">FILM<span>&#x25CF;</span>CLUB</a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#quiz">Quiz</a></li>
+    <li><a href="index.html#events">Events</a></li>
+    <li><a href="index.html#board">Vote</a></li>
+    <li><a href="index.html#signup">Join</a></li>
+    <li><a href="about.html" class="active">Our Story</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg-text" aria-hidden="true">WHY</div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Oakland, CA &nbsp;—&nbsp; Est. 2023</div>
+    <h1 class="hero-title">
+      <span class="line-green">WHY</span><br>
+      <span>FILM</span><br>
+      <span class="line-purple">CLUB</span><br>
+      <span>EXISTS</span>
+    </h1>
+    <div class="hero-divider"></div>
+  </div>
+</section>
+
+<!-- ── STORY ── -->
+<section id="story">
+  <div class="story-grid">
+    <div class="story-label">
+      <div class="tag" style="margin-bottom: 0;">Founder</div>
+    </div>
+    <div class="story-body">
+      <p>My name is Asha, and I love movies.</p>
+      <p>Not just the blockbusters — the weird ones. The surreal ones. The films that feel like someone cracked open their brain and let you wander around inside. City of God. Dark City. Strawberry Mansion. Problemista. The ones that stay with you for days and you just need to talk to someone about them.</p>
+      <p>The problem is my best friends don't love movies. Not like that.</p>
+      <p>But I knew somewhere out there, other people did. People who wanted to sit in a dark room together, watch something strange and beautiful, then argue about it over drinks. After years of lockdown and screens and isolation, meeting in real life felt more important than ever — not just convenient, but necessary.</p>
+      <p>So in October 2023 I started Film Club on Lex, a queer social app in the Bay Area. Over the years about 900 people have joined. But what mattered wasn't the number — it was the 10 to 20 people who actually showed up. Strangers who became regulars. Conversations that kept going long after the credits rolled.</p>
+      <p>We met almost every other month in 2024. Independent theaters, good bars, real conversations. Our most active year yet. And then it started to feel like work. So I stepped back, reflected, and started building something more sustainable — a real home for Film Club, open to everyone.</p>
+      <p>If you've ever left a movie wishing you had someone to talk to about it, this is for you.</p>
+      <p><strong>There's a seat for you at the next one. Get on the list and we'll let you know when it drops.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta">
+  <div class="cta-inner">
+    <div>
+      <h2 class="cta-left-title">
+        GET<br>
+        <span class="outline">ON</span><br>
+        THE<br>
+        <span class="accent">LIST</span>
+      </h2>
+      <p class="cta-left-sub">Next event drops to the list first. No spam — just the film, the venue, and when to show up.</p>
+      <a class="cta-quiz-btn" href="index.html#quiz">Tell us about yourself</a>
+    </div>
+
+    <div class="cta-form-wrap">
+      <div class="cta-form-title">JOIN FILM CLUB</div>
+      <p class="cta-form-sub">We only write when there's a real event. Unsubscribe any time.</p>
+      <form class="cta-form" id="ctaForm" novalidate>
+        <input type="text"  id="ctaName"  placeholder="Your name"     autocomplete="name"  required />
+        <input type="email" id="ctaEmail" placeholder="Email address" autocomplete="email" required />
+        <input type="text"  id="ctaCity"  placeholder="Your city (e.g. Oakland)" autocomplete="address-level2" />
+        <button type="submit" class="btn-green">Sign me up for the next screening.</button>
+        <p class="cta-form-note">Good films. Real people. Strong drinks. See you there.</p>
+      </form>
+      <div class="cta-success" id="ctaSuccess">
+        <div class="cta-success-icon">✔</div>
+        <div class="cta-success-title">YOU'RE ON THE LIST</div>
+        <div class="cta-success-msg">We'll see you at the next one. Keep your eyes on your inbox.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">FILM<span>&#x25CF;</span>CLUB</div>
+  <div class="footer-copy">Oakland, CA &nbsp;—&nbsp; Arthouse &amp; Indie &nbsp;— &copy; 2024</div>
+</footer>
+
+<script src="config.js"></script>
+<script>
+const AT_BASE   = 'https://api.airtable.com/v0/';
+const ML_TABLE  = 'tbl830j5bF3J9g855';
+const ML_FIELDS = {
+  name:       'fldSVLqUGSfnOxMXu',
+  email:      'fldqY8CdORhw1RHGv',
+  signedUpAt: 'fldTzGVeWaWhSJ7l4',
+  city:       'fldU5D4r2D2A8oDDv',
+};
+
+async function airtableSend(tableId, fields) {
+  const _t = ['patrei4GcY3oIBN7o', '7934e6a61179139d016ba6bf845d21867576c10bd5406b85a260c3e15d6b9b2f'].join('.');
+  const token  = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_TOKEN)  ? CONFIG.AIRTABLE_TOKEN  : _t;
+  const baseId = (typeof CONFIG !== 'undefined' && CONFIG.AIRTABLE_BASE_ID) ? CONFIG.AIRTABLE_BASE_ID : 'appSrGNMqcIU92Z17';
+  if (!token || !baseId || token === 'your_airtable_token_here') {
+    console.warn('[Airtable] Skipped — no token/baseId configured.');
+    return { ok: false, skipped: true };
+  }
+  try {
+    const res = await fetch(`${AT_BASE}${baseId}/${tableId}`, {
+      method:  'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields, typecast: true }),
+    });
+    const body = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status };
+  } catch(e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+document.getElementById('ctaForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const name  = document.getElementById('ctaName').value.trim();
+  const email = document.getElementById('ctaEmail').value.trim();
+  const city  = document.getElementById('ctaCity').value.trim();
+  if (!name || !email.includes('@')) return;
+
+  const btn = this.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'SENDING…';
+
+  const fields = {
+    [ML_FIELDS.name]:       name,
+    [ML_FIELDS.email]:      email,
+    [ML_FIELDS.signedUpAt]: new Date().toISOString(),
+  };
+  if (city) fields[ML_FIELDS.city] = city;
+
+  const result = await airtableSend(ML_TABLE, fields);
+
+  if (result.skipped || result.ok) {
+    this.style.display = 'none';
+    document.getElementById('ctaSuccess').classList.add('show');
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'Sign me up for the next screening.';
+  }
+});
+</script>
+</body>
+</html>
